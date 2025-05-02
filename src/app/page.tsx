@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-background via-card to-secondary/10 py-12">
+    <main className="min-h-screen bg-gradient-to-tr from-background via-secondary/10 to-primary/10 py-12">
       <div className="container mx-auto flex flex-col items-center px-4 md:px-8 lg:px-12">
         <div className="w-full max-w-3xl">
           <header className="mb-12 text-center flex flex-col items-center">
