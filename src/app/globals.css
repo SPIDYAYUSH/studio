@@ -1,4 +1,4 @@
-/* Add Inter font */
+/* Add Inter font - Must be at the top */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 @tailwind base;

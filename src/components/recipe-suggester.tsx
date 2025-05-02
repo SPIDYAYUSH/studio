@@ -43,6 +43,7 @@ export function RecipeSuggester() {
         .split(/[\n,]+/)
         .map(item => item.trim())
         .filter(item => item.length > 0);
+      console.log(ingredientList); // DEBUG: Log parsed ingredients
 
       if (ingredientList.length === 0) {
         form.setError("ingredients", { type: "manual", message: "Please enter valid ingredients separated by commas or newlines." });
@@ -51,6 +52,7 @@ export function RecipeSuggester() {
       }
 
       const result = await suggestRecipeFromIngredients({ ingredients: ingredientList });
+      console.log("Recipe result:", result); // DEBUG: Log the result from the AI flow
       setRecipe(result);
     } catch (error) {
       console.error('Error suggesting recipe:', error);
@@ -107,6 +109,7 @@ export function RecipeSuggester() {
           </form>
         </Form>
 
+        {/* Conditionally render RecipeDisplay only when recipe state is not null */}
         {recipe && <RecipeDisplay recipe={recipe} />}
       </CardContent>
     </Card>
