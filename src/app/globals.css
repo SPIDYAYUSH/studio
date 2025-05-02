@@ -2,9 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: 'Inter', sans-serif; /* Use a clean, readable font like Inter */
-}
+/* Add Inter font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 @layer base {
   :root {
@@ -92,9 +91,7 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif; /* Use a clean, readable font like Inter */
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
-
-/* Add Inter font */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
