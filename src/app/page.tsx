@@ -3,26 +3,28 @@ import Image from 'next/image';
 
 export default function Home() {
   return (
-    <main className="container mx-auto flex min-h-screen flex-col items-center p-4 md:p-8 lg:p-12">
-      <div className="w-full max-w-3xl">
-        <header className="mb-8 text-center">
-           <Image
-              src="https://picsum.photos/150/150"
-              alt="Maa Ka Khana Logo"
-              width={100}
-              height={100}
-              className="mx-auto mb-4 rounded-full shadow-md"
-              data-ai-hint="indian food cooking mother"
-            />
-          <h1 className="text-4xl font-bold tracking-tight text-primary sm:text-5xl lg:text-6xl">
-            Maa Ka Khana
-          </h1>
-          <p className="mt-3 text-lg text-muted-foreground sm:text-xl">
-            Tell Maa what's in your fridge, and get a delicious Indian recipe!
-          </p>
-        </header>
+    <main className="min-h-screen bg-gradient-to-br from-background via-card to-secondary/10 py-12">
+      <div className="container mx-auto flex flex-col items-center px-4 md:px-8 lg:px-12">
+        <div className="w-full max-w-3xl">
+          <header className="mb-12 text-center flex flex-col items-center">
+             <Image
+                src="https://picsum.photos/150/150"
+                alt="Maa Ka Khana Logo"
+                width={120} // Slightly larger logo
+                height={120}
+                className="mb-6 rounded-full shadow-xl border-4 border-white" // Added border and more shadow
+                data-ai-hint="indian food cooking mother"
+              />
+            <h1 className="text-5xl font-extrabold tracking-tight text-primary sm:text-6xl lg:text-7xl drop-shadow-md">
+              Maa Ka Khana
+            </h1>
+            <p className="mt-4 text-xl text-foreground/80 sm:text-2xl max-w-xl mx-auto">
+              Tell Maa what's in your fridge, add your preferences, and get a delicious Indian recipe instantly!
+            </p>
+          </header>
 
-        <RecipeSuggester />
+          <RecipeSuggester />
+        </div>
       </div>
     </main>
   );

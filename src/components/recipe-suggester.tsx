@@ -6,13 +6,13 @@ import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ChefHat } from 'lucide-react'; // Added ChefHat icon
 
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'; // Import Select components
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { suggestRecipeFromIngredients, type SuggestRecipeFromIngredientsOutput } from '@/ai/flows/suggest-recipe-from-ingredients';
 import { RecipeDisplay } from './recipe-display';
@@ -56,7 +56,7 @@ export function RecipeSuggester() {
         .map(item => item.trim())
         .filter(item => item.length > 0);
 
-      console.log(ingredientList); // Log ingredient list
+      console.log("Parsed Ingredients:", ingredientList); // Log ingredient list
 
       if (ingredientList.length === 0) {
         form.setError("ingredients", { type: "manual", message: "Please enter valid ingredients separated by commas or newlines." });
@@ -76,6 +76,10 @@ export function RecipeSuggester() {
 
       const result = await suggestRecipeFromIngredients(input);
       console.log("Recipe result:", result); // DEBUG: Log the result from the AI flow
+
+      // Add a small delay for a smoother feel if the response is very fast
+      await new Promise(resolve => setTimeout(resolve, 300));
+
       setRecipe(result);
     } catch (error) {
       console.error('Error suggesting recipe:', error);
@@ -91,10 +95,14 @@ export function RecipeSuggester() {
   }
 
   return (
-    <Card className="w-full shadow-lg">
-      <CardHeader>
-        <CardTitle className="text-2xl font-semibold">What's in the Fridge?</CardTitle>
-        <CardDescription>List your ingredients and preferences, and Maa will suggest a recipe!</CardDescription>
+    // Increased shadow and added subtle border
+    <Card className="w-full shadow-xl border border-border/60 transition-all duration-300 hover:shadow-2xl">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-3xl font-bold text-primary flex items-center gap-2">
+          <ChefHat className="w-8 h-8" />
+           What's in the Fridge?
+        </CardTitle>
+        <CardDescription className="text-md pt-1">List your ingredients and preferences, and Maa will suggest a recipe!</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -105,13 +113,13 @@ export function RecipeSuggester() {
               name="ingredients"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel htmlFor="ingredients-textarea">Ingredients</FormLabel>
+                  <FormLabel htmlFor="ingredients-textarea" className="text-lg font-semibold">Ingredients</FormLabel>
                   <FormControl>
                     <Textarea
                       id="ingredients-textarea"
                       placeholder="e.g., onion, tomato, paneer, chicken, ginger, garlic, yogurt..."
-                      className="resize-none"
-                      rows={4}
+                      className="resize-none text-base shadow-inner bg-input/50 focus:bg-background" // Subtle inner shadow, changes bg on focus
+                      rows={5} // Increased rows
                       {...field}
                       aria-describedby="ingredients-message"
                     />
@@ -121,23 +129,23 @@ export function RecipeSuggester() {
               )}
             />
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2"> {/* Increased gap */}
               {/* Spice Level Select */}
               <FormField
                 control={form.control}
                 name="spiceLevel"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Spice Level Preference</FormLabel>
+                    <FormLabel className="text-lg font-semibold">Spice Level</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="text-base shadow-sm">
                           <SelectValue placeholder="Select spice level" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         {spiceLevels.map(level => (
-                          <SelectItem key={level} value={level}>
+                          <SelectItem key={level} value={level} className="text-base">
                             {level}
                           </SelectItem>
                         ))}
@@ -154,16 +162,16 @@ export function RecipeSuggester() {
                 name="regionalFlavor"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Regional Flavor Preference</FormLabel>
+                    <FormLabel className="text-lg font-semibold">Regional Flavor</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="text-base shadow-sm">
                           <SelectValue placeholder="Select regional flavor" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                          {regionalFlavors.map(flavor => (
-                          <SelectItem key={flavor} value={flavor}>
+                          <SelectItem key={flavor} value={flavor} className="text-base">
                             {flavor}
                           </SelectItem>
                         ))}
@@ -176,10 +184,15 @@ export function RecipeSuggester() {
             </div>
 
             {/* Submit Button */}
-            <Button type="submit" disabled={isLoading} className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
+            <Button
+              type="submit"
+              disabled={isLoading}
+              size="lg" // Larger button
+              className="w-full text-lg font-semibold bg-accent text-accent-foreground hover:bg-accent/90 transition-all duration-200 transform hover:scale-105 focus:scale-105 active:scale-100 shadow-md hover:shadow-lg" // Added transform effects
+            >
               {isLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                   Asking Maa...
                 </>
               ) : (
@@ -190,7 +203,11 @@ export function RecipeSuggester() {
         </Form>
 
         {/* Conditionally render RecipeDisplay only when recipe state is not null */}
-        {recipe && <RecipeDisplay recipe={recipe} />}
+        {/* Added transition for smooth appearance */}
+        <div className={`transition-opacity duration-500 ease-in-out ${recipe ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}>
+           {recipe && <RecipeDisplay recipe={recipe} />}
+        </div>
+
       </CardContent>
     </Card>
   );
