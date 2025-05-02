@@ -5,8 +5,21 @@ export default function Home() {
   return (
     <main
       className="min-h-screen py-12 bg-background"
-      // Add a more complex background using inline style for layered gradients
-      style={{ backgroundImage: 'radial-gradient(circle at top right, hsl(var(--primary) / 0.15), transparent 50%), radial-gradient(circle at bottom left, hsl(var(--secondary) / 0.15), transparent 50%), linear-gradient(to bottom right, hsl(var(--background)), hsl(var(--background) / 0.9))' }}
+      // Enhanced background with more dynamic gradients and a subtle noise texture
+      style={{
+        backgroundImage: `
+          /* Subtle noise texture */
+          linear-gradient(45deg, hsla(0,0%,0%,0.02) 25%, transparent 25%, transparent 75%, hsla(0,0%,0%,0.02) 75%),
+          linear-gradient(45deg, hsla(0,0%,0%,0.02) 25%, transparent 25%, transparent 75%, hsla(0,0%,0%,0.02) 75%),
+          /* Enhanced gradients */
+          radial-gradient(circle at 10% 20%, hsl(var(--primary) / 0.2), transparent 60%),
+          radial-gradient(ellipse at 90% 85%, hsl(var(--secondary) / 0.25), transparent 70%),
+          radial-gradient(circle at 50% 50%, hsl(var(--accent) / 0.05), transparent 50%),
+          /* Base background */
+          linear-gradient(to bottom right, hsl(var(--background)), hsl(var(--background) / 0.9))
+        `,
+        backgroundSize: '10px 10px, 10px 10px, cover, cover, cover, cover', // Size for noise texture
+      }}
     >
       <div className="container mx-auto flex flex-col items-center px-4 md:px-8 lg:px-12">
         <div className="w-full max-w-3xl">
