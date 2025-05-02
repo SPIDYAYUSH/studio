@@ -4,8 +4,8 @@ import Image from 'next/image';
 export default function Home() {
   return (
     <main
-      className="min-h-screen py-12 bg-background"
-      // Removed the complex inline background style to simplify the background
+      className="min-h-screen py-12 bg-gradient-to-br from-orange-50 via-amber-50 to-red-50 relative overflow-hidden"
+      // Restored the gradient background for a more visually appealing look.
     >
       <div className="container mx-auto flex flex-col items-center px-4 md:px-8 lg:px-12">
         <div className="w-full max-w-3xl">
