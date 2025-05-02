@@ -3,7 +3,11 @@ import Image from 'next/image';
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-tr from-background via-secondary/10 to-primary/10 py-12">
+    <main
+      className="min-h-screen py-12 bg-background"
+      // Add a more complex background using inline style for layered gradients
+      style={{ backgroundImage: 'radial-gradient(circle at top right, hsl(var(--primary) / 0.15), transparent 50%), radial-gradient(circle at bottom left, hsl(var(--secondary) / 0.15), transparent 50%), linear-gradient(to bottom right, hsl(var(--background)), hsl(var(--background) / 0.9))' }}
+    >
       <div className="container mx-auto flex flex-col items-center px-4 md:px-8 lg:px-12">
         <div className="w-full max-w-3xl">
           <header className="mb-12 text-center flex flex-col items-center">
