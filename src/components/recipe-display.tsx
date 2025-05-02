@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Flame, Soup, MapPin, UtensilsCross } from 'lucide-react'; // Icons for spice, cuisine type, region
+import { Flame, Soup, MapPin, UtensilsCrossed } from 'lucide-react'; // Icons for spice, cuisine type, region
 import type { SuggestRecipeFromIngredientsOutput } from '@/ai/flows/suggest-recipe-from-ingredients';
 
 interface RecipeDisplayProps {
@@ -47,7 +47,7 @@ export function RecipeDisplay({ recipe }: RecipeDisplayProps) {
           )}
            {recipe.calorieCount && (
             <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1">
-                <UtensilsCross className="h-4 w-4" />
+                <UtensilsCrossed className="h-4 w-4" /> {/* Changed from UtensilsCross */}
                 {recipe.calorieCount} kcal (approx.)
             </Badge>
             )}
