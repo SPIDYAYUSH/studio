@@ -1,21 +1,25 @@
+
 // src/components/recipe-suggester.tsx
 "use client";
 
 import * as React from 'react';
-import { useState, useEffect, useRef } from 'react'; // Added useRef
+import { useState, useEffect, useRef } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Loader2, ChefHat, XCircle, Mic, MicOff } from 'lucide-react'; // Added Mic, MicOff
+import { Loader2, ChefHat, XCircle, Mic, MicOff, ScanSearch, ImageUp } from 'lucide-react'; // Added ScanSearch, ImageUp
 
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input'; // Added Input for file upload
 import { useToast } from '@/hooks/use-toast';
 import { suggestRecipeFromIngredients, type SuggestRecipeFromIngredientsOutput } from '@/ai/flows/suggest-recipe-from-ingredients';
+import { detectDishFromImage } from '@/ai/flows/detect-dish-from-image'; // Import new flow
 import { RecipeDisplay } from './recipe-display';
+import Image from 'next/image'; // For image preview
 
 const formSchema = z.object({
   ingredients: z.string().min(3, {
@@ -41,6 +45,11 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
   const [isListening, setIsListening] = useState(false);
   const speechRecognitionRef = useRef<SpeechRecognition | null>(null);
 
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isDetectingDish, setIsDetectingDish] = useState(false);
+  const [detectedDishInfo, setDetectedDishInfo] = useState<string | null>(null);
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -55,23 +64,29 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
     if (initialRecipe) {
       setRecipe(initialRecipe);
       form.reset({ ingredients: '', spiceLevel: 'Any', regionalFlavor: 'Any' });
+      setSelectedImage(null);
+      setImagePreview(null);
+      setDetectedDishInfo(null);
     }
   }, [initialRecipe, form]);
 
-  // Initialize SpeechRecognition
   useEffect(() => {
+    // Speech Recognition setup (existing code)
+    // ... (omitted for brevity, assuming it's correct from previous steps)
+    // Initialize SpeechRecognition
+    // This effect can be kept as is
     console.log('Speech recognition effect runs. isListening:', isListening);
     if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
       const SpeechRecognitionAPI = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognitionAPI) {
-        if (!speechRecognitionRef.current) { // Initialize only if not already initialized
+        if (!speechRecognitionRef.current) { 
             speechRecognitionRef.current = new SpeechRecognitionAPI();
             console.log('SpeechRecognition API initialized.');
         }
         
         const recognition = speechRecognitionRef.current;
-        recognition.continuous = true; // Keep listening even after a pause
-        recognition.interimResults = false; // We only want final results
+        recognition.continuous = true; 
+        recognition.interimResults = false; 
         recognition.lang = 'en-IN';
 
         recognition.onstart = () => {
@@ -83,7 +98,7 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
           let transcript = '';
           for (let i = event.resultIndex; i < event.results.length; ++i) {
             if (event.results[i].isFinal) {
-              transcript += event.results[i][0].transcript + ' '; // Add space after each part
+              transcript += event.results[i][0].transcript + ' '; 
             }
           }
 
@@ -91,8 +106,7 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
             console.log('Final transcript:', transcript.trim());
             const currentIngredients = form.getValues('ingredients');
             const newIngredients = (currentIngredients ? currentIngredients.trim() + ', ' : '') + transcript.trim();
-            form.setValue('ingredients', newIngredients.trim() + ' '); // Add trailing space for next input
-            // toast({ title: "Heard:", description: transcript.trim() }); // Optional: for quick feedback
+            form.setValue('ingredients', newIngredients.trim() + ' '); 
           } else {
             console.log('No final transcript in this result event or transcript is empty.');
           }
@@ -121,15 +135,11 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
             description: errorMessage,
             variant: 'destructive',
           });
-          setIsListening(false); // Ensure UI reflects that it's not listening
+          setIsListening(false); 
         };
 
         recognition.onend = () => {
           console.log('Speech recognition ended.');
-          // Only set isListening to false if it was not intentionally stopped
-          // This check relies on isListening being up-to-date from the closure
-          // If an error or natural end occurred, and we are not manually stopping, this ensures state is reset.
-          // If handleToggleListening set isListening to false already, this is fine.
           setIsListening(false);
         };
       } else {
@@ -139,24 +149,22 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
       console.warn('SpeechRecognition API not available in this browser.');
     }
 
-    // Cleanup on component unmount or when isListening changes causing re-setup
     return () => {
       console.log('Speech recognition effect cleanup. isListening:', isListening);
       if (speechRecognitionRef.current) {
         console.log('Stopping speech recognition in cleanup.');
-        speechRecognitionRef.current.stop(); // Stop any active recognition
-        // It's good practice to nullify handlers to prevent potential memory leaks
-        // or calls on unmounted components, though modern browsers might handle this well.
+        speechRecognitionRef.current.stop(); 
         speechRecognitionRef.current.onstart = null;
         speechRecognitionRef.current.onresult = null;
         speechRecognitionRef.current.onerror = null;
         speechRecognitionRef.current.onend = null;
-        // speechRecognitionRef.current = null; // Avoid nullifying ref if re-used, unless re-creating instance
       }
     };
-  }, [form, toast, isListening]); // Re-run effect if isListening changes to correctly manage start/stop and handler closures
+  }, [form, toast, isListening]); // Keep dependencies
+
 
   const handleToggleListening = async () => {
+    // ... (existing code, omitted for brevity)
     if (!speechRecognitionRef.current) {
       toast({
         title: 'Voice Input Not Supported',
@@ -170,10 +178,9 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
     if (isListening) {
       console.log('Manually stopping speech recognition.');
       speechRecognitionRef.current.stop();
-      setIsListening(false); // This will trigger useEffect cleanup/re-setup
+      setIsListening(false); 
     } else {
       try {
-        // Check for microphone permission
         if (navigator.permissions) {
             const permissionStatus = await navigator.permissions.query({ name: 'microphone' as PermissionName });
             if (permissionStatus.state === 'denied') {
@@ -191,7 +198,7 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
         }
         console.log('Attempting to start speech recognition.');
         speechRecognitionRef.current.start();
-        setIsListening(true); // This will trigger useEffect to potentially re-attach handlers with new 'isListening' closure
+        setIsListening(true); 
         toast({
           title: 'Listening...',
           description: 'Speak your ingredients now. Click the mic again to stop.',
@@ -208,12 +215,66 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
     }
   };
 
-
   const handleClearDisplayedRecipe = () => {
     setRecipe(null);
     if (onClearInitialRecipe) {
       onClearInitialRecipe();
     }
+  };
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedImage(file);
+      setImagePreview(URL.createObjectURL(file));
+      setDetectedDishInfo(null); // Clear previous detection info
+      setRecipe(null); // Clear current recipe if a new image is uploaded
+      if (onClearInitialRecipe) onClearInitialRecipe();
+    } else {
+      setSelectedImage(null);
+      setImagePreview(null);
+    }
+  };
+
+  const handleDetectDish = async () => {
+    if (!selectedImage) return;
+
+    setIsDetectingDish(true);
+    setDetectedDishInfo('Detecting dish...');
+    setRecipe(null); // Clear current recipe before detection
+    if (onClearInitialRecipe) onClearInitialRecipe();
+
+
+    const reader = new FileReader();
+    reader.readAsDataURL(selectedImage);
+    reader.onloadend = async () => {
+      const imageDataUri = reader.result as string;
+      try {
+        const result = await detectDishFromImage({ imageDataUri });
+        if (result.isFoodItem && result.dishName && !["Not a food item", "Dish not recognized"].includes(result.dishName)) {
+          const currentIngredients = form.getValues('ingredients');
+          const newIngredients = (currentIngredients ? currentIngredients.trim() + ', ' : '') + result.dishName;
+          form.setValue('ingredients', newIngredients.trim(), { shouldValidate: true });
+          setDetectedDishInfo(`Detected: ${result.dishName}. Added to ingredients list below.`);
+          toast({ title: "Dish Detected!", description: `"${result.dishName}" has been added to your ingredients list.` });
+        } else {
+          setDetectedDishInfo(result.dishName || "Could not identify a dish in the image.");
+          toast({ title: "Detection Result", description: result.dishName || "Could not identify a dish in the image.", variant: result.isFoodItem ? "default" : "destructive" });
+        }
+      } catch (error) {
+        console.error('Error detecting dish:', error);
+        setDetectedDishInfo('Error detecting dish. Please try again.');
+        toast({ title: 'Dish Detection Error', description: 'An error occurred. Please try again.', variant: 'destructive' });
+      } finally {
+        setIsDetectingDish(false);
+      }
+    };
+    reader.onerror = () => {
+      console.error('Error reading image file.');
+      setDetectedDishInfo('Error reading image file.');
+      toast({ title: 'Image Read Error', description: 'Could not read the selected image file.', variant: 'destructive' });
+      setIsDetectingDish(false);
+    };
   };
 
 
@@ -224,13 +285,11 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
       onClearInitialRecipe();
     }
 
-    // Ensure speech recognition is stopped before submitting
     if (isListening && speechRecognitionRef.current) {
         console.log('Stopping speech recognition before submitting form.');
         speechRecognitionRef.current.stop();
         setIsListening(false);
     }
-
 
     try {
       const ingredientList = values.ingredients
@@ -240,9 +299,8 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
       
       console.log('Submitting ingredients:', ingredientList);
 
-
       if (ingredientList.length === 0) {
-        form.setError("ingredients", { type: "manual", message: "Please enter valid ingredients separated by commas or newlines." });
+        form.setError("ingredients", { type: "manual", message: "Please enter valid ingredients." });
         setIsLoading(false);
         return;
       }
@@ -255,8 +313,12 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
 
       const result = await suggestRecipeFromIngredients(input);
       console.log('Recipe suggestion result:', result);
-      await new Promise(resolve => setTimeout(resolve, 300)); // Simulate delay for UX
+      await new Promise(resolve => setTimeout(resolve, 300)); 
       setRecipe(result);
+      // Clear image and detection info after successful recipe generation
+      // setSelectedImage(null);
+      // setImagePreview(null);
+      // setDetectedDishInfo(null);
 
     } catch (error) {
       console.error('Error suggesting recipe:', error);
@@ -278,18 +340,44 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
           <ChefHat className="w-8 h-8" />
            What's in the Fridge?
         </CardTitle>
-        <CardDescription className="text-md pt-1">List your ingredients and preferences, and Maa will suggest a recipe!</CardDescription>
+        <CardDescription className="text-md pt-1">Upload an image of a dish, or list your ingredients and preferences, and Maa will suggest a recipe!</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            
+            <FormItem>
+              <div className="flex justify-between items-center">
+                <FormLabel htmlFor="dish-image-upload" className="text-lg font-semibold">Upload Food Image (Optional)</FormLabel>
+                <ImageUp className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <FormControl>
+                <Input id="dish-image-upload" type="file" accept="image/*" onChange={handleImageChange} className="shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+              </FormControl>
+              {imagePreview && (
+                <div className="mt-4 p-4 border border-border/50 rounded-md bg-card/50 shadow-inner">
+                  <Image src={imagePreview} alt="Selected food preview" width={200} height={200} className="rounded-md shadow-md object-cover mx-auto aspect-square" data-ai-hint="food plate" />
+                  <Button 
+                    type="button" 
+                    onClick={handleDetectDish} 
+                    disabled={isDetectingDish || !selectedImage} 
+                    className="mt-3 w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground"
+                  >
+                    {isDetectingDish ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ScanSearch className="mr-2 h-4 w-4" />}
+                    Detect Dish & Add
+                  </Button>
+                  {detectedDishInfo && <p className="mt-2 text-sm text-center text-muted-foreground">{detectedDishInfo}</p>}
+                </div>
+              )}
+            </FormItem>
+
             <FormField
               control={form.control}
               name="ingredients"
               render={({ field }) => (
                 <FormItem>
                   <div className="flex justify-between items-center">
-                    <FormLabel htmlFor="ingredients-textarea" className="text-lg font-semibold">Ingredients</FormLabel>
+                    <FormLabel htmlFor="ingredients-textarea" className="text-lg font-semibold">Or, List Ingredients</FormLabel>
                     <Button
                       type="button"
                       variant="ghost"
@@ -304,7 +392,7 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
                   <FormControl>
                     <Textarea
                       id="ingredients-textarea"
-                      placeholder="e.g., onion, tomato, paneer, chicken, ginger, garlic, yogurt... or click the mic!"
+                      placeholder="e.g., onion, tomato, paneer... or click the mic!"
                       className="resize-none text-base shadow-inner bg-input/50 focus:bg-background"
                       rows={5}
                       {...field}
@@ -370,7 +458,7 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
 
             <Button
               type="submit"
-              disabled={isLoading || isListening} 
+              disabled={isLoading || isListening || isDetectingDish} 
               size="lg"
               className="w-full text-lg font-semibold bg-accent text-accent-foreground hover:bg-accent/90 transition-all duration-200 transform hover:scale-105 focus:scale-105 active:scale-100 shadow-md hover:shadow-lg"
             >
@@ -389,7 +477,7 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
         <div className={`transition-opacity duration-500 ease-in-out mt-6 ${recipe ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}>
            {recipe && (
             <div>
-              {initialRecipe && recipe.recipeName === initialRecipe.recipeName && (
+              {initialRecipe && recipe.recipeName === initialRecipe.recipeName && !selectedImage && ( // Only show close if it was an initialRecipe and no new image interaction
                  <Button
                     variant="outline"
                     size="sm"
