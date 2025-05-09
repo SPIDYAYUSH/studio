@@ -36,17 +36,17 @@ export default function Home() {
 
   return (
     <main
-      className="min-h-screen py-12 bg-gradient-to-tr from-teal-50 via-emerald-50 to-green-50 relative overflow-hidden"
+      className="min-h-screen py-12 bg-background relative overflow-hidden" // Changed background from gradient to solid background color
     >
       <div className="fixed inset-0 -z-10">
         <Image
-            src="https://picsum.photos/1920/1080"
-            alt="Abstract culinary background"
+            src="https://picsum.photos/1920/1080" // Using picsum.photos for placeholder
+            alt="Warm and inviting Indian kitchen or food background" // Descriptive alt text
             layout="fill"
             objectFit="cover"
-            quality={80}
-            className="opacity-20 blur-sm"
-            data-ai-hint="culinary abstract pattern"
+            quality={75} 
+            className="opacity-25 blur-md" // Adjusted opacity and blur for a softer background
+            data-ai-hint="indian kitchen food" // AI hint for image search
         />
       </div>
 
@@ -54,12 +54,12 @@ export default function Home() {
         <div className="w-full max-w-3xl">
           <header className="mb-12 text-center flex flex-col items-center">
              <Image
-                src="https://picsum.photos/150/150"
+                src="https://picsum.photos/150/150" // Placeholder, same as before
                 alt="Maa Ka Khana Logo"
                 width={120}
                 height={120}
                 className="mb-6 rounded-full shadow-xl border-4 border-white"
-                data-ai-hint="indian food cooking mother"
+                data-ai-hint="indian mother cooking" 
               />
             <h1 className="text-5xl font-extrabold tracking-tight text-primary sm:text-6xl lg:text-7xl drop-shadow-md">
               Maa Ka Khana
