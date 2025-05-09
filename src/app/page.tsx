@@ -1,4 +1,3 @@
-
 "use client";
 
 import * as React from 'react';
@@ -30,10 +29,10 @@ export default function Home() {
       style={{ backgroundImage: "url('https://th.bing.com/th/id/OIP.qqQCzCVLbgiSZeOyaM4oJAHaFd?rs=1&pid=ImgDetMain')" }}
       data-ai-hint="indian spices"
     >
-      <div className="absolute inset-0 bg-background/75 backdrop-blur-[2px]"></div>
+      <div className="absolute inset-0 bg-background/75 backdrop-blur-md"></div> {/* Increased blur */}
 
-      <div className="container mx-auto flex flex-col items-center px-4 md:px-8 lg:px-12 relative z-10 py-12">
-        <div className="w-full max-w-3xl">
+      <div className="container mx-auto flex flex-col items-center px-4 sm:px-6 md:px-8 lg:px-16 relative z-10 py-16 sm:py-20 md:py-24"> {/* Adjusted padding */}
+        <div className="w-full max-w-4xl"> {/* Increased max-width */}
           <header className="mb-12 text-center flex flex-col items-center">
             <Image
               src="https://img.freepik.com/premium-vector/free-vector-mother-cooking-kitchen_727932-18.jpg?w=2000"
@@ -78,4 +77,3 @@ export default function Home() {
     </main>
   );
 }
-
