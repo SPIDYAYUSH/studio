@@ -33,7 +33,7 @@ export default function Home() {
   return (
     <main
       className="min-h-screen bg-cover bg-center bg-fixed relative"
-      style={{ backgroundImage: "url('https://picsum.photos/seed/indianmomkitchen/1920/1080')" }} 
+      style={{ backgroundImage: "url('https://sl.bing.net/kgkrw5WJ53c')" }} 
       data-ai-hint="indian mother kitchen" 
     >
       <div className="absolute inset-0 bg-background/75 backdrop-blur-sm"></div> {/* Overlay for better text readability */}
@@ -42,7 +42,7 @@ export default function Home() {
         <div className="w-full max-w-3xl">
           <header className="mb-12 text-center flex flex-col items-center">
              <Image
-                src="https://picsum.photos/seed/lovingmom/150/150" 
+                src="https://sl.bing.net/j4OicQU7m8" 
                 alt="Maa Ka Khana - A loving mother's touch in cooking"
                 width={120}
                 height={120}
