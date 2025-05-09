@@ -36,9 +36,14 @@ export default function Home() {
 
   return (
     <main
-      className="min-h-screen py-12 bg-gradient-to-br from-primary/10 via-background to-secondary/10 relative"
+      className="min-h-screen py-12 bg-cover bg-center bg-fixed relative"
+      // Replace 'YOUR_IMAGE_URL_HERE' with the actual URL of your background image
+      // For example: style={{ backgroundImage: "url('https://example.com/your-image.jpg')" }}
+      // You can also use a local image from your public folder: style={{ backgroundImage: "url('/your-local-image.jpg')" }}
+      style={{ backgroundImage: "url('https://picsum.photos/1920/1080?blur=2&grayscale')" }}
+      data-ai-hint="food background"
     >
-      {/* Removed static background Image component */}
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div> {/* Overlay for better readability */}
 
       <div className="container mx-auto flex flex-col items-center px-4 md:px-8 lg:px-12 relative z-10">
         <div className="w-full max-w-3xl">
@@ -89,4 +94,3 @@ export default function Home() {
     </main>
   );
 }
-
