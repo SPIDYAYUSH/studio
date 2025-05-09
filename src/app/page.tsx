@@ -36,36 +36,33 @@ export default function Home() {
 
   return (
     <main
-      className="min-h-screen py-12 bg-cover bg-center bg-fixed relative overflow-hidden" // Added overflow-hidden to contain absolute elements if they somehow extend
-      // The user wants a soft, warm-toned Indian kitchen background with subtle spices and utensils in corners,
-      // gentle lighting, traditional patterns (paisleys/mandalas faintly), and a homey feel.
-      // The image should be light and not overpower text.
-      style={{ backgroundImage: "url('https://picsum.photos/seed/indiankitchenbg/1920/1080?blur=4')" }} 
-      data-ai-hint="indian kitchen" // This hint aligns with the request for an Indian kitchen theme.
+      className="min-h-screen py-12 bg-cover bg-center bg-fixed relative overflow-hidden"
+      style={{ backgroundImage: "url('https://picsum.photos/seed/warmkitchenbg/1920/1080?blur=5&grayscale')" }} 
+      data-ai-hint="indian kitchen" 
     >
-      <div className="absolute inset-0 bg-background/75 backdrop-blur-md"></div> {/* Overlay: adjusted opacity and blur */}
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div> {/* Overlay: increased opacity and reduced blur for readability */}
 
-      {/* Top-left decorative image */}
-      <div className="absolute top-16 left-16 opacity-60 hidden lg:block transform -rotate-12 transition-all duration-300 ease-in-out hover:scale-110 hover:opacity-85 z-5">
+      {/* Top-left decorative image - more subtle */}
+      <div className="absolute top-8 left-8 opacity-50 hidden lg:block transform -rotate-15 transition-all duration-300 ease-in-out hover:scale-105 hover:opacity-75 z-5">
         <Image
-          src="https://picsum.photos/seed/spiceseed/200/200" // Slightly increased size
+          src="https://picsum.photos/seed/spicesbowl/150/150"
           alt="Decorative spices"
-          width={150} // Increased size
-          height={150} // Increased size
-          className="rounded-full shadow-2xl border-4 border-secondary/40" // Enhanced shadow and border
+          width={100} 
+          height={100}
+          className="rounded-full shadow-xl border-2 border-secondary/30"
           data-ai-hint="indian spices"
         />
       </div>
 
-      {/* Bottom-right decorative image */}
-      <div className="absolute bottom-16 right-16 opacity-60 hidden lg:block transform rotate-12 transition-all duration-300 ease-in-out hover:scale-110 hover:opacity-85 z-5">
+      {/* Bottom-right decorative image - more subtle */}
+      <div className="absolute bottom-8 right-8 opacity-50 hidden lg:block transform rotate-15 transition-all duration-300 ease-in-out hover:scale-105 hover:opacity-75 z-5">
         <Image
-          src="https://picsum.photos/seed/utensilseed/200/200" // Slightly increased size
-          alt="Decorative kitchenware"
-          width={150} // Increased size
-          height={150} // Increased size
-          className="rounded-2xl shadow-2xl border-4 border-secondary/40" // Enhanced shadow and border
-          data-ai-hint="kitchenware pattern"
+          src="https://picsum.photos/seed/paisleypattern/150/150" 
+          alt="Decorative traditional pattern"
+          width={100}
+          height={100}
+          className="rounded-lg shadow-xl border-2 border-secondary/30"
+          data-ai-hint="traditional pattern"
         />
       </div>
 
@@ -74,17 +71,17 @@ export default function Home() {
         <div className="w-full max-w-3xl">
           <header className="mb-12 text-center flex flex-col items-center">
              <Image
-                src="https://picsum.photos/id/1005/150/150" 
+                src="https://picsum.photos/seed/lovingmom/150/150" 
                 alt="Maa Ka Khana - A loving mother's touch in cooking"
                 width={120}
                 height={120}
-                className="mb-6 rounded-full shadow-2xl border-4 border-primary/50" // Changed border to primary
+                className="mb-6 rounded-full shadow-2xl border-4 border-primary/60" 
                 data-ai-hint="indian mother" 
               />
-            <h1 className="text-5xl font-extrabold tracking-tight text-primary sm:text-6xl lg:text-7xl drop-shadow-lg"> {/* Increased drop shadow */}
+            <h1 className="text-5xl font-extrabold tracking-tight text-primary sm:text-6xl lg:text-7xl drop-shadow-md"> 
               Maa Ka Khana
             </h1>
-            <p className="mt-4 text-xl text-foreground/80 sm:text-2xl max-w-xl mx-auto drop-shadow-sm"> {/* Added subtle drop shadow */}
+            <p className="mt-4 text-xl text-foreground/90 sm:text-2xl max-w-xl mx-auto drop-shadow-sm"> 
               Tell Maa what's in your fridge, add your preferences, and get a delicious Indian recipe instantly!
             </p>
           </header>
@@ -102,7 +99,7 @@ export default function Home() {
               }}
               variant="outline"
               size="lg"
-              className="bg-secondary/80 hover:bg-secondary text-secondary-foreground font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200" // Enhanced shadow and hover effect
+              className="bg-secondary/90 hover:bg-secondary text-secondary-foreground font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200" 
             >
               {showSavedRecipes ? <ListCollapse className="mr-2 h-5 w-5" /> : <ListOrdered className="mr-2 h-5 w-5" />}
               {showSavedRecipes ? 'Hide Saved Recipes' : 'Show Saved Recipes'}
@@ -111,7 +108,7 @@ export default function Home() {
 
           {/* Conditional rendering for SavedRecipesList */}
           {/* Wrapped in a div for transition control if needed */}
-          <div className={`transition-all duration-500 ease-in-out ${showSavedRecipes ? 'max-h-screen opacity-100 mt-8' : 'max-h-0 opacity-0 overflow-hidden mt-0'}`}> {/* Added mt-8 for spacing when shown */}
+          <div className={`transition-all duration-500 ease-in-out ${showSavedRecipes ? 'max-h-screen opacity-100 mt-8' : 'max-h-0 opacity-0 overflow-hidden mt-0'}`}> 
             {showSavedRecipes && <SavedRecipesList onViewRecipe={handleViewRecipe} />}
           </div>
         </div>
