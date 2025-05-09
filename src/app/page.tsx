@@ -29,11 +29,11 @@ export default function Home() {
       style={{ backgroundImage: "url('https://th.bing.com/th/id/OIP.qqQCzCVLbgiSZeOyaM4oJAHaFd?rs=1&pid=ImgDetMain')" }}
       data-ai-hint="indian spices"
     >
-      <div className="absolute inset-0 bg-background/75 backdrop-blur-md"></div> {/* Maintained blur */}
+      <div className="absolute inset-0 bg-background/75"></div> {/* Removed backdrop-blur-sm */}
 
-      <div className="container mx-auto flex flex-col items-center px-4 md:px-8 lg:px-12 relative z-10 py-12"> {/* Reverted padding */}
-        <div className="w-full max-w-3xl"> {/* Reverted max-width */}
-          <header className="mb-12 text-center flex flex-col items-center">
+      <div className="container mx-auto flex flex-col items-center px-4 py-12 relative z-10 md:px-6 lg:px-8">
+        <div className="w-full max-w-3xl bg-card/80 p-6 md:p-8 rounded-xl shadow-2xl backdrop-blur-sm"> {/* Added backdrop-blur-sm here to main content card for readability */}
+          <header className="mb-10 text-center flex flex-col items-center">
             <Image
               src="https://img.freepik.com/premium-vector/free-vector-mother-cooking-kitchen_727932-18.jpg?w=2000"
               alt="Maa Ka Khana - A loving mother's touch in cooking"
