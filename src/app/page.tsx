@@ -8,6 +8,7 @@ import type { SavedRecipe } from '@/hooks/use-saved-recipes';
 import { Button } from '@/components/ui/button';
 import { ListCollapse, ListOrdered } from 'lucide-react';
 import type { SuggestRecipeFromIngredientsOutput } from '@/ai/flows/suggest-recipe-from-ingredients';
+import Image from 'next/image'; // Import next/image
 
 export default function Home() {
   const [showSavedRecipes, setShowSavedRecipes] = React.useState(false);
@@ -25,15 +26,24 @@ export default function Home() {
 
   return (
     <main
-      className="min-h-screen relative bg-background" // Removed inline style for background image
+      className="min-h-screen relative bg-cover bg-center bg-fixed"
+      style={{ backgroundImage: "url('https://picsum.photos/seed/maa-ka-khana-bg/1920/1080')" }}
+      data-ai-hint="warm kitchen spices"
     >
-      {/* Removed overlay div as background image is removed, direct bg-background from main will be used */}
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div> {/* Overlay for blur and readability */}
 
       <div className="container mx-auto flex flex-col items-center px-4 md:px-8 lg:px-12 relative z-10 py-12">
         <div className="w-full max-w-3xl">
           <header className="mb-12 text-center flex flex-col items-center">
-            {/* Logo Image component removed */}
-            <h1 className="text-5xl font-extrabold tracking-tight text-primary sm:text-6xl lg:text-7xl drop-shadow-md mt-6"> {/* Added margin-top to compensate for removed logo */}
+            <Image
+              src="https://picsum.photos/seed/maa-ka-khana-logo/200/200"
+              alt="Maa Ka Khana Logo"
+              width={100}
+              height={100}
+              className="mb-4 rounded-full shadow-lg border-2 border-primary/50"
+              data-ai-hint="indian food logo"
+            />
+            <h1 className="text-5xl font-extrabold tracking-tight text-primary sm:text-6xl lg:text-7xl drop-shadow-md">
               Maa Ka Khana
             </h1>
             <p className="mt-4 text-xl text-foreground/90 sm:text-2xl max-w-xl mx-auto drop-shadow-sm">
