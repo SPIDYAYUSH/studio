@@ -41,8 +41,8 @@ export default function Home() {
       // For example: style={{ backgroundImage: "url('https://example.com/your-image.jpg')" }}
       // You can also use a local image from your public folder: style={{ backgroundImage: "url('/your-local-image.jpg')" }}
       // PASTE YOUR IMAGE URL HERE in place of the picsum URL
-      style={{ backgroundImage: "url('https://picsum.photos/1920/1080?image=1078&blur=3')" }} // Example: changed picsum image and added more blur
-      data-ai-hint="food background"
+      style={{ backgroundImage: "url('https://picsum.photos/1920/1080?image=1062&blur=4')" }} // Example: changed picsum image to a food/kitchen related one and added more blur
+      data-ai-hint="indian kitchen" // Updated hint for better relevance to the theme
     >
       <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div> {/* Overlay for better readability */}
 
