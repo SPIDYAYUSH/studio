@@ -37,12 +37,11 @@ export default function Home() {
   return (
     <main
       className="min-h-screen py-12 bg-cover bg-center bg-fixed relative overflow-hidden" // Added overflow-hidden to contain absolute elements if they somehow extend
-      // Replace 'YOUR_IMAGE_URL_HERE' with the actual URL of your background image
-      // For example: style={{ backgroundImage: "url('https://example.com/your-image.jpg')" }}
-      // You can also use a local image from your public folder: style={{ backgroundImage: "url('/your-local-image.jpg')" }}
-      // PASTE YOUR IMAGE URL HERE in place of the picsum URL
-      style={{ backgroundImage: "url('https://picsum.photos/1920/1080?image=1062&blur=4')" }} // Example: changed picsum image to a food/kitchen related one and added more blur
-      data-ai-hint="indian kitchen" // Updated hint for better relevance to the theme
+      // The user wants a soft, warm-toned Indian kitchen background with subtle spices and utensils in corners,
+      // gentle lighting, traditional patterns (paisleys/mandalas faintly), and a homey feel.
+      // The image should be light and not overpower text.
+      style={{ backgroundImage: "url('https://picsum.photos/seed/indiankitchenbg/1920/1080?blur=4')" }} 
+      data-ai-hint="indian kitchen" // This hint aligns with the request for an Indian kitchen theme.
     >
       <div className="absolute inset-0 bg-background/75 backdrop-blur-md"></div> {/* Overlay: adjusted opacity and blur */}
 
