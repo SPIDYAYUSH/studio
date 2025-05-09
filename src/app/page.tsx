@@ -36,25 +36,15 @@ export default function Home() {
 
   return (
     <main
-      className="min-h-screen py-12 bg-background relative overflow-hidden" // Changed background from gradient to solid background color
+      className="min-h-screen py-12 bg-gradient-to-br from-primary/10 via-background to-secondary/10 relative"
     >
-      <div className="fixed inset-0 -z-10">
-        <Image
-            src="https://picsum.photos/1920/1080" // Using picsum.photos for placeholder
-            alt="Abstract cool background image" // Descriptive alt text
-            layout="fill"
-            objectFit="cover"
-            quality={75} 
-            className="opacity-25 blur-md" // Adjusted opacity and blur for a softer background
-            data-ai-hint="abstract cool" // AI hint for image search
-        />
-      </div>
+      {/* Removed background Image component */}
 
       <div className="container mx-auto flex flex-col items-center px-4 md:px-8 lg:px-12 relative z-10">
         <div className="w-full max-w-3xl">
           <header className="mb-12 text-center flex flex-col items-center">
              <Image
-                src="https://picsum.photos/150/150" // Placeholder, same as before
+                src="https://picsum.photos/150/150" 
                 alt="Maa Ka Khana Logo"
                 width={120}
                 height={120}
