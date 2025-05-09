@@ -340,10 +340,15 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
             <FormItem>
               <div className="flex justify-between items-center">
                 <FormLabel htmlFor="dish-image-upload" className="text-lg font-semibold">Upload Food Image (Optional)</FormLabel>
-                {/* Removed ImageUp icon from here */}
               </div>
               <FormControl>
-                <Input id="dish-image-upload" type="file" accept="image/*" onChange={handleImageChange} className="shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+                <Input 
+                  id="dish-image-upload" 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={handleImageChange} 
+                  className="bg-transparent border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" 
+                />
               </FormControl>
               {imagePreview && (
                 <div className="mt-4 p-4 border border-border/50 rounded-md bg-card/50 shadow-inner">
@@ -486,3 +491,4 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
     </Card>
   );
 }
+
