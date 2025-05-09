@@ -7,7 +7,6 @@ import { SavedRecipesList } from '@/components/saved-recipes-list';
 import type { SavedRecipe } from '@/hooks/use-saved-recipes';
 import { Button } from '@/components/ui/button';
 import { ListCollapse, ListOrdered } from 'lucide-react';
-import Image from 'next/image';
 import type { SuggestRecipeFromIngredientsOutput } from '@/ai/flows/suggest-recipe-from-ingredients';
 
 export default function Home() {
@@ -26,24 +25,15 @@ export default function Home() {
 
   return (
     <main
-      className="min-h-screen bg-cover bg-center bg-fixed relative"
-      style={{ backgroundImage: "url('https://i.imgur.com/cNp0pQR.jpg')" }} // Updated background image
-      data-ai-hint="indian spices" // Updated data-ai-hint
+      className="min-h-screen relative bg-background" // Removed inline style for background image
     >
-      <div className="absolute inset-0 bg-background/75 backdrop-blur-sm"></div>
+      {/* Removed overlay div as background image is removed, direct bg-background from main will be used */}
 
       <div className="container mx-auto flex flex-col items-center px-4 md:px-8 lg:px-12 relative z-10 py-12">
         <div className="w-full max-w-3xl">
           <header className="mb-12 text-center flex flex-col items-center">
-            <Image
-              src="https://i.imgur.com/XvY5a7P.png" // Updated logo image
-              alt="Maa Ka Khana - A loving mother's touch in cooking"
-              width={120}
-              height={120}
-              className="mb-6 rounded-full shadow-2xl border-4 border-primary/60"
-              data-ai-hint="mother icon" // Updated data-ai-hint
-            />
-            <h1 className="text-5xl font-extrabold tracking-tight text-primary sm:text-6xl lg:text-7xl drop-shadow-md">
+            {/* Logo Image component removed */}
+            <h1 className="text-5xl font-extrabold tracking-tight text-primary sm:text-6xl lg:text-7xl drop-shadow-md mt-6"> {/* Added margin-top to compensate for removed logo */}
               Maa Ka Khana
             </h1>
             <p className="mt-4 text-xl text-foreground/90 sm:text-2xl max-w-xl mx-auto drop-shadow-sm">
