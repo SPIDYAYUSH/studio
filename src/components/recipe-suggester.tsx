@@ -7,19 +7,19 @@ import { useState, useEffect, useRef } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Loader2, ChefHat, XCircle, Mic, MicOff, ScanSearch, ImageUp } from 'lucide-react'; // Added ScanSearch, ImageUp
+import { Loader2, ChefHat, XCircle, Mic, MicOff, ScanSearch } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input'; // Added Input for file upload
+import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { suggestRecipeFromIngredients, type SuggestRecipeFromIngredientsOutput } from '@/ai/flows/suggest-recipe-from-ingredients';
-import { detectDishFromImage } from '@/ai/flows/detect-dish-from-image'; // Import new flow
+import { detectDishFromImage } from '@/ai/flows/detect-dish-from-image';
 import { RecipeDisplay } from './recipe-display';
-import Image from 'next/image'; // For image preview
+import Image from 'next/image';
 
 const formSchema = z.object({
   ingredients: z.string().min(3, {
@@ -71,10 +71,6 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
   }, [initialRecipe, form]);
 
   useEffect(() => {
-    // Speech Recognition setup (existing code)
-    // ... (omitted for brevity, assuming it's correct from previous steps)
-    // Initialize SpeechRecognition
-    // This effect can be kept as is
     console.log('Speech recognition effect runs. isListening:', isListening);
     if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
       const SpeechRecognitionAPI = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -160,11 +156,10 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
         speechRecognitionRef.current.onend = null;
       }
     };
-  }, [form, toast, isListening]); // Keep dependencies
+  }, [form, toast, isListening]);
 
 
   const handleToggleListening = async () => {
-    // ... (existing code, omitted for brevity)
     if (!speechRecognitionRef.current) {
       toast({
         title: 'Voice Input Not Supported',
@@ -227,8 +222,8 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
     if (file) {
       setSelectedImage(file);
       setImagePreview(URL.createObjectURL(file));
-      setDetectedDishInfo(null); // Clear previous detection info
-      setRecipe(null); // Clear current recipe if a new image is uploaded
+      setDetectedDishInfo(null); 
+      setRecipe(null); 
       if (onClearInitialRecipe) onClearInitialRecipe();
     } else {
       setSelectedImage(null);
@@ -241,7 +236,7 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
 
     setIsDetectingDish(true);
     setDetectedDishInfo('Detecting dish...');
-    setRecipe(null); // Clear current recipe before detection
+    setRecipe(null); 
     if (onClearInitialRecipe) onClearInitialRecipe();
 
 
@@ -315,10 +310,6 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
       console.log('Recipe suggestion result:', result);
       await new Promise(resolve => setTimeout(resolve, 300)); 
       setRecipe(result);
-      // Clear image and detection info after successful recipe generation
-      // setSelectedImage(null);
-      // setImagePreview(null);
-      // setDetectedDishInfo(null);
 
     } catch (error) {
       console.error('Error suggesting recipe:', error);
@@ -338,7 +329,7 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
       <CardHeader className="pb-4">
         <CardTitle className="text-3xl font-bold text-primary flex items-center gap-2">
           <ChefHat className="w-8 h-8" />
-           What's in the Fridge?
+           What&apos;s in the Fridge?
         </CardTitle>
         <CardDescription className="text-md pt-1">Upload an image of a dish, or list your ingredients and preferences, and Maa will suggest a recipe!</CardDescription>
       </CardHeader>
@@ -349,7 +340,7 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
             <FormItem>
               <div className="flex justify-between items-center">
                 <FormLabel htmlFor="dish-image-upload" className="text-lg font-semibold">Upload Food Image (Optional)</FormLabel>
-                <ImageUp className="h-5 w-5 text-muted-foreground" />
+                {/* Removed ImageUp icon from here */}
               </div>
               <FormControl>
                 <Input id="dish-image-upload" type="file" accept="image/*" onChange={handleImageChange} className="shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
@@ -477,7 +468,7 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
         <div className={`transition-opacity duration-500 ease-in-out mt-6 ${recipe ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}>
            {recipe && (
             <div>
-              {initialRecipe && recipe.recipeName === initialRecipe.recipeName && !selectedImage && ( // Only show close if it was an initialRecipe and no new image interaction
+              {initialRecipe && recipe.recipeName === initialRecipe.recipeName && !selectedImage && ( 
                  <Button
                     variant="outline"
                     size="sm"
