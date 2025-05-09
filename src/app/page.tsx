@@ -38,14 +38,14 @@ export default function Home() {
     <main
       className="min-h-screen py-12 bg-gradient-to-br from-primary/10 via-background to-secondary/10 relative"
     >
-      {/* Removed background Image component */}
+      {/* Removed static background Image component */}
 
       <div className="container mx-auto flex flex-col items-center px-4 md:px-8 lg:px-12 relative z-10">
         <div className="w-full max-w-3xl">
           <header className="mb-12 text-center flex flex-col items-center">
              <Image
                 src="https://picsum.photos/150/150" 
-                alt="Maa Ka Khana Logo"
+                alt="Maa Ka Khana - A loving mother preparing food"
                 width={120}
                 height={120}
                 className="mb-6 rounded-full shadow-xl border-4 border-white"
