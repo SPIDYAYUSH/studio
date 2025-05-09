@@ -40,7 +40,8 @@ export default function Home() {
       // Replace 'YOUR_IMAGE_URL_HERE' with the actual URL of your background image
       // For example: style={{ backgroundImage: "url('https://example.com/your-image.jpg')" }}
       // You can also use a local image from your public folder: style={{ backgroundImage: "url('/your-local-image.jpg')" }}
-      style={{ backgroundImage: "url('https://picsum.photos/1920/1080?blur=2&grayscale')" }}
+      // PASTE YOUR IMAGE URL HERE in place of the picsum URL
+      style={{ backgroundImage: "url('https://picsum.photos/1920/1080?image=1060&blur=2')" }} // Example: changed picsum image and removed grayscale
       data-ai-hint="food background"
     >
       <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div> {/* Overlay for better readability */}
@@ -94,3 +95,4 @@ export default function Home() {
     </main>
   );
 }
+
