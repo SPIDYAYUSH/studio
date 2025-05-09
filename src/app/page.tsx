@@ -29,10 +29,10 @@ export default function Home() {
       style={{ backgroundImage: "url('https://th.bing.com/th/id/OIP.qqQCzCVLbgiSZeOyaM4oJAHaFd?rs=1&pid=ImgDetMain')" }}
       data-ai-hint="indian spices"
     >
-      <div className="absolute inset-0 bg-background/75"></div> {/* Removed backdrop-blur-sm */}
+      <div className="absolute inset-0 bg-background/75"></div> {/* Removed backdrop-blur-sm from overlay */}
 
       <div className="container mx-auto flex flex-col items-center px-4 py-12 relative z-10 md:px-6 lg:px-8">
-        <div className="w-full max-w-3xl bg-card/80 p-6 md:p-8 rounded-xl shadow-2xl backdrop-blur-sm animate-fade-in"> {/* Added animate-fade-in and backdrop-blur-sm to main content card */}
+        <div className="w-full max-w-3xl bg-card/80 p-6 md:p-8 rounded-xl shadow-2xl backdrop-blur-sm animate-fade-in"> {/* Styled main content area as a card */}
           <header className="mb-10 text-center flex flex-col items-center">
             <Image
               src="https://img.freepik.com/premium-vector/free-vector-mother-cooking-kitchen_727932-18.jpg?w=2000"

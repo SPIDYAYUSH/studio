@@ -1,4 +1,3 @@
-
 // src/components/recipe-suggester.tsx
 "use client";
 
@@ -491,4 +490,3 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
     </Card>
   );
 }
-
