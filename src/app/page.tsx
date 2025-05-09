@@ -7,8 +7,8 @@ import { SavedRecipesList } from '@/components/saved-recipes-list';
 import type { SavedRecipe } from '@/hooks/use-saved-recipes';
 import { Button } from '@/components/ui/button';
 import { ListCollapse, ListOrdered } from 'lucide-react';
+import Image from 'next/image';
 import type { SuggestRecipeFromIngredientsOutput } from '@/ai/flows/suggest-recipe-from-ingredients';
-import Image from 'next/image'; // Import next/image
 
 export default function Home() {
   const [showSavedRecipes, setShowSavedRecipes] = React.useState(false);
@@ -26,22 +26,22 @@ export default function Home() {
 
   return (
     <main
-      className="min-h-screen relative bg-cover bg-center bg-fixed"
-      style={{ backgroundImage: "url('https://picsum.photos/seed/modern-kitchen-background/1920/1080')" }}
-      data-ai-hint="kitchen background"
+      className="min-h-screen bg-cover bg-center bg-fixed relative"
+      style={{ backgroundImage: "url('https://i.imgur.com/ABXtUuD.jpg')" }} // Previous Imgur background
+      data-ai-hint="indian mother kitchen"
     >
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div> {/* Reduced blur */}
+      <div className="absolute inset-0 bg-background/75 backdrop-blur-sm"></div>
 
       <div className="container mx-auto flex flex-col items-center px-4 md:px-8 lg:px-12 relative z-10 py-12">
         <div className="w-full max-w-3xl">
           <header className="mb-12 text-center flex flex-col items-center">
             <Image
-              src="https://picsum.photos/seed/chef-hat-logo/200/200"
-              alt="Maa Ka Khana Logo - Chef Theme"
-              width={100}
-              height={100}
-              className="mb-4 rounded-full shadow-lg border-2 border-primary/50"
-              data-ai-hint="chef hat"
+              src="https://i.imgur.com/fGJkMRM.png" // Previous Imgur logo
+              alt="Maa Ka Khana - A loving mother's touch in cooking"
+              width={120}
+              height={120}
+              className="mb-6 rounded-full shadow-2xl border-4 border-primary/60"
+              data-ai-hint="indian mother"
             />
             <h1 className="text-5xl font-extrabold tracking-tight text-primary sm:text-6xl lg:text-7xl drop-shadow-md">
               Maa Ka Khana
