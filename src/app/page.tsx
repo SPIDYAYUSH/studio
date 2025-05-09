@@ -27,8 +27,8 @@ export default function Home() {
   return (
     <main
       className="min-h-screen relative bg-cover bg-center bg-fixed"
-      style={{ backgroundImage: "url('https://picsum.photos/seed/kitchen-background/1920/1080')" }}
-      data-ai-hint="kitchen background"
+      style={{ backgroundImage: "url('https://picsum.photos/seed/chef-kitchen-background/1920/1080')" }}
+      data-ai-hint="chef kitchen"
     >
       <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div> {/* Reduced blur */}
 
