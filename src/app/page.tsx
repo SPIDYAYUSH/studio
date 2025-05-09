@@ -36,7 +36,7 @@ export default function Home() {
 
   return (
     <main
-      className="min-h-screen py-12 bg-cover bg-center bg-fixed relative"
+      className="min-h-screen py-12 bg-cover bg-center bg-fixed relative overflow-hidden" // Added overflow-hidden to contain absolute elements if they somehow extend
       // Replace 'YOUR_IMAGE_URL_HERE' with the actual URL of your background image
       // For example: style={{ backgroundImage: "url('https://example.com/your-image.jpg')" }}
       // You can also use a local image from your public folder: style={{ backgroundImage: "url('/your-local-image.jpg')" }}
@@ -44,7 +44,32 @@ export default function Home() {
       style={{ backgroundImage: "url('https://picsum.photos/1920/1080?image=1062&blur=4')" }} // Example: changed picsum image to a food/kitchen related one and added more blur
       data-ai-hint="indian kitchen" // Updated hint for better relevance to the theme
     >
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div> {/* Overlay for better readability */}
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div> {/* Overlay */}
+
+      {/* Top-left decorative image */}
+      <div className="absolute top-20 left-20 opacity-50 hidden lg:block transform -rotate-12 transition-all duration-300 ease-in-out hover:scale-105 hover:opacity-70 z-5">
+        <Image
+          src="https://picsum.photos/seed/spiceseed/150/150"
+          alt="Decorative spices"
+          width={130}
+          height={130}
+          className="rounded-full shadow-xl border-4 border-secondary/30"
+          data-ai-hint="indian spices"
+        />
+      </div>
+
+      {/* Bottom-right decorative image */}
+      <div className="absolute bottom-20 right-20 opacity-50 hidden lg:block transform rotate-12 transition-all duration-300 ease-in-out hover:scale-105 hover:opacity-70 z-5">
+        <Image
+          src="https://picsum.photos/seed/utensilseed/150/150"
+          alt="Decorative kitchenware"
+          width={130}
+          height={130}
+          className="rounded-xl shadow-xl border-4 border-secondary/30"
+          data-ai-hint="kitchenware pattern"
+        />
+      </div>
+
 
       <div className="container mx-auto flex flex-col items-center px-4 md:px-8 lg:px-12 relative z-10">
         <div className="w-full max-w-3xl">
