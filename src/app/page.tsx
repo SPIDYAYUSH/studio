@@ -41,7 +41,7 @@ export default function Home() {
       // For example: style={{ backgroundImage: "url('https://example.com/your-image.jpg')" }}
       // You can also use a local image from your public folder: style={{ backgroundImage: "url('/your-local-image.jpg')" }}
       // PASTE YOUR IMAGE URL HERE in place of the picsum URL
-      style={{ backgroundImage: "url('https://picsum.photos/1920/1080?image=1060&blur=2')" }} // Example: changed picsum image and removed grayscale
+      style={{ backgroundImage: "url('https://picsum.photos/1920/1080?image=1078&blur=3')" }} // Example: changed picsum image and added more blur
       data-ai-hint="food background"
     >
       <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div> {/* Overlay for better readability */}
@@ -50,12 +50,12 @@ export default function Home() {
         <div className="w-full max-w-3xl">
           <header className="mb-12 text-center flex flex-col items-center">
              <Image
-                src="https://picsum.photos/150/150" 
-                alt="Maa Ka Khana - A loving mother preparing food"
+                src="https://picsum.photos/id/1005/150/150" // Changed image to reflect a more motherly/homely feel
+                alt="Maa Ka Khana - A loving mother's touch in cooking"
                 width={120}
                 height={120}
                 className="mb-6 rounded-full shadow-xl border-4 border-white"
-                data-ai-hint="indian mother cooking" 
+                data-ai-hint="indian mother" // Updated hint for better relevance
               />
             <h1 className="text-5xl font-extrabold tracking-tight text-primary sm:text-6xl lg:text-7xl drop-shadow-md">
               Maa Ka Khana
@@ -95,4 +95,3 @@ export default function Home() {
     </main>
   );
 }
-
