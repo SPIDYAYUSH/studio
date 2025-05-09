@@ -27,21 +27,21 @@ export default function Home() {
   return (
     <main
       className="min-h-screen relative bg-cover bg-center bg-fixed"
-      style={{ backgroundImage: "url('https://picsum.photos/seed/maa-ka-khana-bg/1920/1080')" }}
-      data-ai-hint="warm kitchen spices"
+      style={{ backgroundImage: "url('https://picsum.photos/seed/chef-ingredients-bg/1920/1080')" }}
+      data-ai-hint="kitchen ingredients"
     >
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div> {/* Overlay for blur and readability */}
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-md"></div> {/* Increased blur */}
 
       <div className="container mx-auto flex flex-col items-center px-4 md:px-8 lg:px-12 relative z-10 py-12">
         <div className="w-full max-w-3xl">
           <header className="mb-12 text-center flex flex-col items-center">
             <Image
-              src="https://picsum.photos/seed/maa-ka-khana-logo/200/200"
-              alt="Maa Ka Khana Logo"
+              src="https://picsum.photos/seed/chef-hat-logo/200/200"
+              alt="Maa Ka Khana Logo - Chef or Ingredients"
               width={100}
               height={100}
               className="mb-4 rounded-full shadow-lg border-2 border-primary/50"
-              data-ai-hint="indian food logo"
+              data-ai-hint="chef hat"
             />
             <h1 className="text-5xl font-extrabold tracking-tight text-primary sm:text-6xl lg:text-7xl drop-shadow-md">
               Maa Ka Khana
@@ -78,3 +78,4 @@ export default function Home() {
     </main>
   );
 }
+
