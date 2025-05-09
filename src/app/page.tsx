@@ -32,7 +32,7 @@ export default function Home() {
       <div className="absolute inset-0 bg-background/75"></div> {/* Removed backdrop-blur-sm */}
 
       <div className="container mx-auto flex flex-col items-center px-4 py-12 relative z-10 md:px-6 lg:px-8">
-        <div className="w-full max-w-3xl bg-card/80 p-6 md:p-8 rounded-xl shadow-2xl backdrop-blur-sm"> {/* Added backdrop-blur-sm here to main content card for readability */}
+        <div className="w-full max-w-3xl bg-card/80 p-6 md:p-8 rounded-xl shadow-2xl backdrop-blur-sm animate-fade-in"> {/* Added animate-fade-in and backdrop-blur-sm to main content card */}
           <header className="mb-10 text-center flex flex-col items-center">
             <Image
               src="https://img.freepik.com/premium-vector/free-vector-mother-cooking-kitchen_727932-18.jpg?w=2000"
