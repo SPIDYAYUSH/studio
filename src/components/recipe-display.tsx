@@ -1,14 +1,24 @@
-
 "use client";
 
 import * as React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button'; // Import Button
-import { Flame, Soup, MapPin, UtensilsCrossed, ListChecks, CookingPot, Bookmark, BookmarkCheck } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Flame, MapPin, UtensilsCrossed, ListChecks, CookingPot, Bookmark, BookmarkCheck, ListPlus } from 'lucide-react';
 import type { SuggestRecipeFromIngredientsOutput } from '@/ai/flows/suggest-recipe-from-ingredients';
-import { useSavedRecipes, type SavedRecipe } from '@/hooks/use-saved-recipes'; // Import hook
+import { useSavedRecipes } from '@/hooks/use-saved-recipes'; 
+import { useRecipePlaylists } from '@/hooks/use-recipe-playlists';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useToast } from '@/hooks/use-toast';
+
 
 interface RecipeDisplayProps {
   recipe: SuggestRecipeFromIngredientsOutput;
@@ -31,10 +41,11 @@ const getSpiceLevel = (level?: string) => {
 };
 
 export function RecipeDisplay({ recipe }: RecipeDisplayProps) {
-  const { addRecipe, removeRecipe, isRecipeSaved, savedRecipes } = useSavedRecipes();
+  const { addRecipe, removeRecipe, savedRecipes } = useSavedRecipes();
+  const { playlists, addRecipeToPlaylist } = useRecipePlaylists();
+  const { toast } = useToast(); // For local toasts if needed, though hooks handle most.
   const spiceInfo = getSpiceLevel(recipe.spiceLevel);
   
-  // Find the full saved recipe object if it exists to get its ID for removal
   const currentSavedRecipe = savedRecipes.find(r => r.recipeName === recipe.recipeName);
   const isCurrentlySaved = !!currentSavedRecipe;
 
@@ -46,20 +57,54 @@ export function RecipeDisplay({ recipe }: RecipeDisplayProps) {
     }
   };
 
+  const handleAddRecipeToPlaylist = (playlistId: string) => {
+    if (currentSavedRecipe) {
+      addRecipeToPlaylist(playlistId, currentSavedRecipe.id, currentSavedRecipe.recipeName);
+    } else {
+      toast({ title: "Error", description: "Recipe must be saved first to add to a playlist.", variant: "destructive" });
+    }
+  };
+
   return (
     <Card className="mt-10 border-primary/50 shadow-lg bg-card animate-fade-in">
       <CardHeader className="pb-4">
         <div className="flex justify-between items-start">
           <CardTitle className="text-3xl font-bold text-primary flex-grow">{recipe.recipeName}</CardTitle>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleSaveToggle}
-            aria-label={isCurrentlySaved ? "Unsave recipe" : "Save recipe"}
-            className="ml-4 flex-shrink-0 text-accent hover:text-accent/80"
-          >
-            {isCurrentlySaved ? <BookmarkCheck className="h-6 w-6 text-primary" /> : <Bookmark className="h-6 w-6" />}
-          </Button>
+          <div className="flex items-center gap-1 ml-2 flex-shrink-0">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleSaveToggle}
+              aria-label={isCurrentlySaved ? "Unsave recipe" : "Save recipe"}
+              className="text-accent hover:text-accent/80"
+              title={isCurrentlySaved ? "Unsave recipe" : "Save recipe"}
+            >
+              {isCurrentlySaved ? <BookmarkCheck className="h-6 w-6 text-primary" /> : <Bookmark className="h-6 w-6" />}
+            </Button>
+            {isCurrentlySaved && currentSavedRecipe && playlists.length > 0 && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" aria-label="Add to playlist" className="text-accent hover:text-accent/80" title="Add to playlist">
+                    <ListPlus className="h-6 w-6" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-popover">
+                  <DropdownMenuLabel>Add to Playlist</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {playlists.map((playlist) => (
+                    <DropdownMenuItem key={playlist.id} onClick={() => handleAddRecipeToPlaylist(playlist.id)} className="hover:bg-accent/10">
+                      {playlist.name}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+             {isCurrentlySaved && currentSavedRecipe && playlists.length === 0 && (
+                <Button variant="ghost" size="icon" disabled title="Create a playlist first to add this recipe" className="text-muted-foreground cursor-not-allowed">
+                    <ListPlus className="h-6 w-6" />
+                </Button>
+            )}
+          </div>
         </div>
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {spiceInfo && (
