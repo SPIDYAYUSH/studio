@@ -5,11 +5,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { Flame, MapPin, UtensilsCrossed, ListChecks, CookingPot, Bookmark, BookmarkCheck, ListPlus } from 'lucide-react';
+import { Flame, MapPin, UtensilsCrossed, ListChecks, CookingPot, Bookmark, BookmarkCheck, ListPlus, ChefHat } from 'lucide-react';
 import type { SuggestRecipeFromIngredientsOutput } from '@/ai/flows/suggest-recipe-from-ingredients';
 import { useSavedRecipes, type SavedRecipe } from '@/hooks/use-saved-recipes'; 
 import { useRecipePlaylists } from '@/hooks/use-recipe-playlists';
-import { Checkbox } from "@/components/ui/checkbox"; // Import Checkbox
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useToast } from '@/hooks/use-toast';
+import { CookingModeModal } from './cooking-mode-modal';
 
 
 interface RecipeDisplayProps {
@@ -48,13 +49,16 @@ export function RecipeDisplay({ recipe }: RecipeDisplayProps) {
   const spiceInfo = getSpiceLevel(recipe.spiceLevel);
   
   const [checkedIngredients, setCheckedIngredients] = React.useState<Record<string, boolean>>({});
+  const [isCookingModeOpen, setIsCookingModeOpen] = React.useState(false);
 
-  // Reset checked ingredients when the recipe changes
+
   React.useEffect(() => {
     const initialCheckedState: Record<string, boolean> = {};
-    recipe.ingredients.forEach(ingredient => {
-      initialCheckedState[ingredient] = false;
-    });
+    if (recipe.ingredients) {
+        recipe.ingredients.forEach(ingredient => {
+        initialCheckedState[ingredient] = false;
+        });
+    }
     setCheckedIngredients(initialCheckedState);
   }, [recipe]);
 
@@ -161,51 +165,74 @@ export function RecipeDisplay({ recipe }: RecipeDisplayProps) {
       </CardHeader>
       <Separator className="mx-6 my-2 bg-border/70" />
       <CardContent className="space-y-6 pt-6">
-        <div>
-          <h3 className="mb-3 text-xl font-semibold flex items-center gap-2 text-foreground/90">
-             <ListChecks className="h-5 w-5 text-secondary-foreground" />
-             Ingredients Checklist:
-          </h3>
-          <ul className="space-y-2 pl-2 text-base">
-            {recipe.ingredients.map((ingredient, index) => (
-              <li key={index} className="flex items-center gap-3 py-1">
-                <Checkbox
-                  id={`ingredient-${index}-${recipe.recipeName}`} // Ensure unique ID
-                  checked={checkedIngredients[ingredient] || false}
-                  onCheckedChange={(checked) => handleIngredientCheck(ingredient, checked as boolean)}
-                  className="border-primary/50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
-                  aria-label={`Mark ${ingredient} as gathered`}
-                />
-                <label
-                  htmlFor={`ingredient-${index}-${recipe.recipeName}`} // Ensure unique ID
-                  className={`cursor-pointer transition-colors ${
-                    checkedIngredients[ingredient]
-                      ? 'line-through text-muted-foreground/70'
-                      : 'text-muted-foreground hover:text-foreground/80'
-                  }`}
-                >
-                  {ingredient}
-                </label>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <Separator className="my-4 bg-border/50" />
-        <div>
-          <h3 className="mb-3 text-xl font-semibold flex items-center gap-2 text-foreground/90">
-            <CookingPot className="h-5 w-5 text-secondary-foreground" />
-            Instructions from Maa:
+        {recipe.ingredients && recipe.ingredients.length > 0 && (
+            <div>
+            <h3 className="mb-3 text-xl font-semibold flex items-center gap-2 text-foreground/90">
+                <ListChecks className="h-5 w-5 text-secondary-foreground" />
+                Ingredients Checklist:
             </h3>
-          <ol className="list-decimal space-y-3 pl-8 text-base leading-relaxed">
-            {recipe.instructions.map((instruction, index) => (
-              <li key={index}>{instruction}</li>
-            ))}
-          </ol>
-        </div>
+            <ul className="space-y-2 pl-2 text-base">
+                {recipe.ingredients.map((ingredient, index) => (
+                <li key={index} className="flex items-center gap-3 py-1">
+                    <Checkbox
+                    id={`ingredient-${index}-${recipe.recipeName}`}
+                    checked={checkedIngredients[ingredient] || false}
+                    onCheckedChange={(checked) => handleIngredientCheck(ingredient, checked as boolean)}
+                    className="border-primary/50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                    aria-label={`Mark ${ingredient} as gathered`}
+                    />
+                    <label
+                    htmlFor={`ingredient-${index}-${recipe.recipeName}`}
+                    className={`cursor-pointer transition-colors ${
+                        checkedIngredients[ingredient]
+                        ? 'line-through text-muted-foreground/70'
+                        : 'text-muted-foreground hover:text-foreground/80'
+                    }`}
+                    >
+                    {ingredient}
+                    </label>
+                </li>
+                ))}
+            </ul>
+            </div>
+        )}
+        {recipe.ingredients && recipe.ingredients.length > 0 && recipe.instructions && recipe.instructions.length > 0 && (
+            <Separator className="my-4 bg-border/50" />
+        )}
+        {recipe.instructions && recipe.instructions.length > 0 && (
+            <div>
+            <h3 className="mb-3 text-xl font-semibold flex items-center gap-2 text-foreground/90">
+                <CookingPot className="h-5 w-5 text-secondary-foreground" />
+                Instructions from Maa:
+                </h3>
+            <ol className="list-decimal space-y-3 pl-8 text-base leading-relaxed">
+                {recipe.instructions.map((instruction, index) => (
+                <li key={index}>{instruction}</li>
+                ))}
+            </ol>
+            </div>
+        )}
       </CardContent>
-       <CardFooter className="pt-4">
+       <CardFooter className="pt-4 flex flex-col sm:flex-row justify-between items-center gap-4">
          <p className="text-sm text-muted-foreground/80 italic">Enjoy your delicious home-cooked meal!</p>
+         {recipe.instructions && recipe.instructions.length > 0 && (
+            <Button 
+              onClick={() => setIsCookingModeOpen(true)} 
+              className="bg-accent text-accent-foreground hover:bg-accent/90 w-full sm:w-auto"
+              aria-label="Start step-by-step cooking mode"
+            >
+              <ChefHat className="mr-2 h-5 w-5" /> Start Cooking
+            </Button>
+          )}
        </CardFooter>
+
+      {recipe.instructions && recipe.instructions.length > 0 && (
+        <CookingModeModal
+          recipe={recipe}
+          isOpen={isCookingModeOpen}
+          onClose={() => setIsCookingModeOpen(false)}
+        />
+      )}
     </Card>
   );
 }
