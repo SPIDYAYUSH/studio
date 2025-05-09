@@ -4,15 +4,16 @@
 import * as React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator'; // Import Separator
-import { Flame, Soup, MapPin, UtensilsCrossed, ListChecks, CookingPot } from 'lucide-react'; // Added ListChecks, CookingPot
+import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button'; // Import Button
+import { Flame, Soup, MapPin, UtensilsCrossed, ListChecks, CookingPot, Bookmark, BookmarkCheck } from 'lucide-react';
 import type { SuggestRecipeFromIngredientsOutput } from '@/ai/flows/suggest-recipe-from-ingredients';
+import { useSavedRecipes, type SavedRecipe } from '@/hooks/use-saved-recipes'; // Import hook
 
 interface RecipeDisplayProps {
   recipe: SuggestRecipeFromIngredientsOutput;
 }
 
-// Helper to get spice level icon and color
 const getSpiceLevel = (level?: string) => {
   switch (level?.toLowerCase()) {
     case 'mild':
@@ -30,14 +31,36 @@ const getSpiceLevel = (level?: string) => {
 };
 
 export function RecipeDisplay({ recipe }: RecipeDisplayProps) {
+  const { addRecipe, removeRecipe, isRecipeSaved, savedRecipes } = useSavedRecipes();
   const spiceInfo = getSpiceLevel(recipe.spiceLevel);
+  
+  // Find the full saved recipe object if it exists to get its ID for removal
+  const currentSavedRecipe = savedRecipes.find(r => r.recipeName === recipe.recipeName);
+  const isCurrentlySaved = !!currentSavedRecipe;
+
+  const handleSaveToggle = () => {
+    if (isCurrentlySaved && currentSavedRecipe) {
+      removeRecipe(currentSavedRecipe.id);
+    } else {
+      addRecipe(recipe);
+    }
+  };
 
   return (
-    // Added animation class for subtle fade-in effect
     <Card className="mt-10 border-primary/50 shadow-lg bg-card animate-fade-in">
       <CardHeader className="pb-4">
-        <CardTitle className="text-3xl font-bold text-primary">{recipe.recipeName}</CardTitle>
-        {/* Moved badges to a dedicated div below title */}
+        <div className="flex justify-between items-start">
+          <CardTitle className="text-3xl font-bold text-primary flex-grow">{recipe.recipeName}</CardTitle>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleSaveToggle}
+            aria-label={isCurrentlySaved ? "Unsave recipe" : "Save recipe"}
+            className="ml-4 flex-shrink-0 text-accent hover:text-accent/80"
+          >
+            {isCurrentlySaved ? <BookmarkCheck className="h-6 w-6 text-primary" /> : <Bookmark className="h-6 w-6" />}
+          </Button>
+        </div>
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {spiceInfo && (
             <Badge variant="outline" className={`flex items-center gap-1 px-3 py-1 text-sm font-medium rounded-full border ${spiceInfo.color}`}>
@@ -60,26 +83,26 @@ export function RecipeDisplay({ recipe }: RecipeDisplayProps) {
             )}
         </div>
       </CardHeader>
-      <Separator className="mx-6 my-2 bg-border/70" /> {/* Added Separator */}
-      <CardContent className="space-y-6 pt-6"> {/* Added padding top */}
+      <Separator className="mx-6 my-2 bg-border/70" />
+      <CardContent className="space-y-6 pt-6">
         <div>
           <h3 className="mb-3 text-xl font-semibold flex items-center gap-2 text-foreground/90">
              <ListChecks className="h-5 w-5 text-secondary-foreground" />
              Ingredients Needed:
           </h3>
-          <ul className="list-disc space-y-1.5 pl-8 text-muted-foreground text-base"> {/* Increased text size */}
+          <ul className="list-disc space-y-1.5 pl-8 text-muted-foreground text-base">
             {recipe.ingredients.map((ingredient, index) => (
               <li key={index}>{ingredient}</li>
             ))}
           </ul>
         </div>
-        <Separator className="my-4 bg-border/50" /> {/* Added Separator */}
+        <Separator className="my-4 bg-border/50" />
         <div>
           <h3 className="mb-3 text-xl font-semibold flex items-center gap-2 text-foreground/90">
             <CookingPot className="h-5 w-5 text-secondary-foreground" />
             Instructions from Maa:
             </h3>
-          <ol className="list-decimal space-y-3 pl-8 text-base leading-relaxed"> {/* Increased spacing and line height */}
+          <ol className="list-decimal space-y-3 pl-8 text-base leading-relaxed">
             {recipe.instructions.map((instruction, index) => (
               <li key={index}>{instruction}</li>
             ))}
@@ -92,18 +115,3 @@ export function RecipeDisplay({ recipe }: RecipeDisplayProps) {
     </Card>
   );
 }
-
-// Add simple fade-in animation to globals.css if needed, or use Tailwind's animate utilities
-// Example in globals.css:
-/*
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
-}
-*/
-
-// Alternatively, add animation utilities in tailwind.config.js
-// and use classes like `animate-in fade-in slide-in-from-bottom-2 duration-500`

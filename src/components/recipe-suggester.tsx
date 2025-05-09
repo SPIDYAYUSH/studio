@@ -1,12 +1,13 @@
+
 // src/components/recipe-suggester.tsx
 "use client";
 
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react'; // Added useEffect
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Loader2, ChefHat } from 'lucide-react'; // Added ChefHat icon
+import { Loader2, ChefHat, XCircle } from 'lucide-react'; // Added XCircle
 
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -17,7 +18,6 @@ import { useToast } from '@/hooks/use-toast';
 import { suggestRecipeFromIngredients, type SuggestRecipeFromIngredientsOutput } from '@/ai/flows/suggest-recipe-from-ingredients';
 import { RecipeDisplay } from './recipe-display';
 
-// Update form schema to include optional spiceLevel and regionalFlavor
 const formSchema = z.object({
   ingredients: z.string().min(3, {
     message: 'Please list at least one ingredient.',
@@ -26,12 +26,15 @@ const formSchema = z.object({
   regionalFlavor: z.string().optional(),
 });
 
-// Define options for the Select components
 const spiceLevels = ["Any", "Mild", "Medium", "Spicy", "Very Spicy"];
 const regionalFlavors = ["Any", "North Indian", "South Indian", "East Indian", "West Indian", "Gujarati", "Punjabi", "Bengali", "Maharashtrian"];
 
+interface RecipeSuggesterProps {
+  initialRecipe?: SuggestRecipeFromIngredientsOutput | null; // To display a recipe passed from parent
+  onClearInitialRecipe?: () => void; // Callback to clear the initial recipe
+}
 
-export function RecipeSuggester() {
+export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeSuggesterProps) {
   const [recipe, setRecipe] = useState<SuggestRecipeFromIngredientsOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -40,23 +43,44 @@ export function RecipeSuggester() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       ingredients: '',
-      spiceLevel: 'Any', // Default value
-      regionalFlavor: 'Any', // Default value
+      spiceLevel: 'Any',
+      regionalFlavor: 'Any',
     },
   });
 
+  // Effect to display initialRecipe if provided
+  useEffect(() => {
+    if (initialRecipe) {
+      setRecipe(initialRecipe);
+      // Optionally reset form or clear ingredients if a recipe is being viewed
+      form.reset({ ingredients: '', spiceLevel: 'Any', regionalFlavor: 'Any' });
+    }
+  }, [initialRecipe, form]);
+
+
+  const handleClearDisplayedRecipe = () => {
+    setRecipe(null);
+    if (onClearInitialRecipe) {
+      onClearInitialRecipe();
+    }
+  };
+
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    setRecipe(null); // Clear previous recipe
+    setRecipe(null); // Clear previous recipe, including any initialRecipe
+    if (onClearInitialRecipe) { // Also notify parent if it was an initial recipe
+      onClearInitialRecipe();
+    }
+
 
     try {
-      // Basic parsing: split by comma or newline, trim whitespace, filter empty strings
       const ingredientList = values.ingredients
         .split(/[\n,]+/)
         .map(item => item.trim())
         .filter(item => item.length > 0);
 
-      console.log("Parsed Ingredients:", ingredientList); // Log ingredient list
+      console.log("Parsed Ingredients:", ingredientList);
 
       if (ingredientList.length === 0) {
         form.setError("ingredients", { type: "manual", message: "Please enter valid ingredients separated by commas or newlines." });
@@ -64,20 +88,17 @@ export function RecipeSuggester() {
         return;
       }
 
-      // Prepare input for the AI flow, including preferences
       const input = {
         ingredients: ingredientList,
-        // Only include preference if it's not "Any"
         ...(values.spiceLevel && values.spiceLevel !== 'Any' && { spiceLevel: values.spiceLevel }),
         ...(values.regionalFlavor && values.regionalFlavor !== 'Any' && { regionalFlavor: values.regionalFlavor }),
       };
 
-      console.log("Sending to AI:", input); // DEBUG: Log input sent to AI
+      console.log("Sending to AI:", input);
 
       const result = await suggestRecipeFromIngredients(input);
-      console.log("Recipe result:", result); // DEBUG: Log the result from the AI flow
+      console.log("Recipe result:", result);
 
-      // Add a small delay for a smoother feel if the response is very fast
       await new Promise(resolve => setTimeout(resolve, 300));
 
       setRecipe(result);
@@ -88,14 +109,13 @@ export function RecipeSuggester() {
         description: 'Maa is busy right now. Please try again later.',
         variant: 'destructive',
       });
-      setRecipe(null); // Ensure recipe is cleared on error
+      setRecipe(null);
     } finally {
       setIsLoading(false);
     }
   }
 
   return (
-    // Increased shadow and added subtle border
     <Card className="w-full shadow-xl border border-border/60 transition-all duration-300 hover:shadow-2xl">
       <CardHeader className="pb-4">
         <CardTitle className="text-3xl font-bold text-primary flex items-center gap-2">
@@ -105,9 +125,10 @@ export function RecipeSuggester() {
         <CardDescription className="text-md pt-1">List your ingredients and preferences, and Maa will suggest a recipe!</CardDescription>
       </CardHeader>
       <CardContent>
+        {/* Only show form if no initialRecipe is being viewed from saved list, or allow overriding */}
+        {/* For simplicity, always show form. User can ignore if viewing. */}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Ingredients Textarea */}
             <FormField
               control={form.control}
               name="ingredients"
@@ -118,8 +139,8 @@ export function RecipeSuggester() {
                     <Textarea
                       id="ingredients-textarea"
                       placeholder="e.g., onion, tomato, paneer, chicken, ginger, garlic, yogurt..."
-                      className="resize-none text-base shadow-inner bg-input/50 focus:bg-background" // Subtle inner shadow, changes bg on focus
-                      rows={5} // Increased rows
+                      className="resize-none text-base shadow-inner bg-input/50 focus:bg-background"
+                      rows={5}
                       {...field}
                       aria-describedby="ingredients-message"
                     />
@@ -129,8 +150,7 @@ export function RecipeSuggester() {
               )}
             />
 
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2"> {/* Increased gap */}
-              {/* Spice Level Select */}
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="spiceLevel"
@@ -156,7 +176,6 @@ export function RecipeSuggester() {
                 )}
               />
 
-              {/* Regional Flavor Select */}
               <FormField
                 control={form.control}
                 name="regionalFlavor"
@@ -183,12 +202,11 @@ export function RecipeSuggester() {
               />
             </div>
 
-            {/* Submit Button */}
             <Button
               type="submit"
               disabled={isLoading}
-              size="lg" // Larger button
-              className="w-full text-lg font-semibold bg-accent text-accent-foreground hover:bg-accent/90 transition-all duration-200 transform hover:scale-105 focus:scale-105 active:scale-100 shadow-md hover:shadow-lg" // Added transform effects
+              size="lg"
+              className="w-full text-lg font-semibold bg-accent text-accent-foreground hover:bg-accent/90 transition-all duration-200 transform hover:scale-105 focus:scale-105 active:scale-100 shadow-md hover:shadow-lg"
             >
               {isLoading ? (
                 <>
@@ -202,10 +220,22 @@ export function RecipeSuggester() {
           </form>
         </Form>
 
-        {/* Conditionally render RecipeDisplay only when recipe state is not null */}
-        {/* Added transition for smooth appearance */}
-        <div className={`transition-opacity duration-500 ease-in-out ${recipe ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}>
-           {recipe && <RecipeDisplay recipe={recipe} />}
+        <div className={`transition-opacity duration-500 ease-in-out mt-6 ${recipe ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}>
+           {recipe && (
+            <div>
+              {initialRecipe && recipe.recipeName === initialRecipe.recipeName && (
+                 <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleClearDisplayedRecipe}
+                    className="mb-4 flex items-center"
+                  >
+                    <XCircle className="mr-2 h-4 w-4" /> Close Viewed Recipe
+                  </Button>
+              )}
+              <RecipeDisplay recipe={recipe} />
+            </div>
+           )}
         </div>
 
       </CardContent>
