@@ -41,12 +41,12 @@ export default function Home() {
       <div className="fixed inset-0 -z-10">
         <Image
             src="https://picsum.photos/1920/1080" // Using picsum.photos for placeholder
-            alt="Warm and inviting Indian kitchen or food background" // Descriptive alt text
+            alt="Abstract cool background image" // Descriptive alt text
             layout="fill"
             objectFit="cover"
             quality={75} 
             className="opacity-25 blur-md" // Adjusted opacity and blur for a softer background
-            data-ai-hint="indian kitchen food" // AI hint for image search
+            data-ai-hint="abstract cool" // AI hint for image search
         />
       </div>
 
@@ -99,3 +99,4 @@ export default function Home() {
     </main>
   );
 }
+
