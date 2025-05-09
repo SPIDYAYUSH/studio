@@ -7,7 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { Flame, MapPin, UtensilsCrossed, ListChecks, CookingPot, Bookmark, BookmarkCheck, ListPlus } from 'lucide-react';
 import type { SuggestRecipeFromIngredientsOutput } from '@/ai/flows/suggest-recipe-from-ingredients';
-import { useSavedRecipes } from '@/hooks/use-saved-recipes'; 
+import { useSavedRecipes, type SavedRecipe } from '@/hooks/use-saved-recipes'; 
 import { useRecipePlaylists } from '@/hooks/use-recipe-playlists';
 import {
   DropdownMenu,
@@ -43,25 +43,45 @@ const getSpiceLevel = (level?: string) => {
 export function RecipeDisplay({ recipe }: RecipeDisplayProps) {
   const { addRecipe, removeRecipe, savedRecipes } = useSavedRecipes();
   const { playlists, addRecipeToPlaylist } = useRecipePlaylists();
-  const { toast } = useToast(); // For local toasts if needed, though hooks handle most.
+  const { toast } = useToast();
   const spiceInfo = getSpiceLevel(recipe.spiceLevel);
   
+  // Check if the *currently displayed* recipe (from props) is saved
   const currentSavedRecipe = savedRecipes.find(r => r.recipeName === recipe.recipeName);
   const isCurrentlySaved = !!currentSavedRecipe;
 
-  const handleSaveToggle = () => {
+  const handleSaveToggle = async () => {
     if (isCurrentlySaved && currentSavedRecipe) {
       removeRecipe(currentSavedRecipe.id);
     } else {
-      addRecipe(recipe);
+      await addRecipe(recipe); // addRecipe is now async
     }
   };
 
-  const handleAddRecipeToPlaylist = (playlistId: string) => {
-    if (currentSavedRecipe) {
-      addRecipeToPlaylist(playlistId, currentSavedRecipe.id, currentSavedRecipe.recipeName);
+  const handleAddRecipeToPlaylist = async (playlistId: string) => {
+    let recipeToAdd: SavedRecipe | null = savedRecipes.find(r => r.recipeName === recipe.recipeName);
+
+    if (!recipeToAdd) {
+      // If not saved, save it now. addRecipe returns the SavedRecipe or null.
+      const newlySavedRecipe = await addRecipe(recipe); 
+      if (newlySavedRecipe) {
+        recipeToAdd = newlySavedRecipe; 
+      } else {
+        // Saving failed or it was identified as already saved by addRecipe (which would have returned it and shown a toast).
+        // If addRecipe returned null and didn't save, we can't proceed.
+        // A toast might have already been shown by addRecipe if it failed or was a duplicate.
+        // We can add a fallback toast here if desired, but it might be redundant.
+        // For now, if newlySavedRecipe is null, we assume addRecipe handled user feedback.
+        return;
+      }
+    }
+
+    // At this point, recipeToAdd should be the SavedRecipe object with an ID
+    if (recipeToAdd) {
+      addRecipeToPlaylist(playlistId, recipeToAdd.id, recipeToAdd.recipeName);
     } else {
-      toast({ title: "Error", description: "Recipe must be saved first to add to a playlist.", variant: "destructive" });
+      // This case should ideally not be reached if addRecipe works as expected
+      toast({ title: "Error", description: "Could not obtain saved recipe details. Try saving the recipe first.", variant: "destructive" });
     }
   };
 
@@ -81,7 +101,9 @@ export function RecipeDisplay({ recipe }: RecipeDisplayProps) {
             >
               {isCurrentlySaved ? <BookmarkCheck className="h-6 w-6 text-primary" /> : <Bookmark className="h-6 w-6" />}
             </Button>
-            {isCurrentlySaved && currentSavedRecipe && playlists.length > 0 && (
+            
+            {/* Show "Add to Playlist" if playlists exist, regardless of saved status */}
+            {playlists.length > 0 && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" aria-label="Add to playlist" className="text-accent hover:text-accent/80" title="Add to playlist">
@@ -99,7 +121,8 @@ export function RecipeDisplay({ recipe }: RecipeDisplayProps) {
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
-             {isCurrentlySaved && currentSavedRecipe && playlists.length === 0 && (
+            {/* Show disabled "Add to Playlist" button if no playlists exist */}
+             {playlists.length === 0 && (
                 <Button variant="ghost" size="icon" disabled title="Create a playlist first to add this recipe" className="text-muted-foreground cursor-not-allowed">
                     <ListPlus className="h-6 w-6" />
                 </Button>
@@ -160,3 +183,4 @@ export function RecipeDisplay({ recipe }: RecipeDisplayProps) {
     </Card>
   );
 }
+

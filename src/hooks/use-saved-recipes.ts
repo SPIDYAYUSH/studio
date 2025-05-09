@@ -1,4 +1,3 @@
-
 // src/hooks/use-saved-recipes.ts
 "use client";
 
@@ -44,27 +43,30 @@ export function useSavedRecipes() {
     }
   };
 
-  const addRecipe = useCallback((recipe: SuggestRecipeFromIngredientsOutput) => {
+  const addRecipe = useCallback(async (recipe: SuggestRecipeFromIngredientsOutput): Promise<SavedRecipe | null> => {
+    const existingRecipe = savedRecipes.find(r => r.recipeName === recipe.recipeName);
+    if (existingRecipe) {
+      toast({
+        title: "Already Saved",
+        description: `"${recipe.recipeName}" is already in your saved list.`,
+      });
+      return existingRecipe;
+    }
+    
+    const newRecipeWithId: SavedRecipe = { ...recipe, id: recipe.recipeName.replace(/\s+/g, '-') + '-' + Date.now().toString() };
+    
     setSavedRecipes(prevRecipes => {
-      // Check if recipe by name already exists to avoid duplicates based on name
-      if (prevRecipes.some(r => r.recipeName === recipe.recipeName)) {
-        toast({
-          title: "Already Saved",
-          description: `"${recipe.recipeName}" is already in your saved list.`,
-        });
-        return prevRecipes;
-      }
-      // Simple ID generation for this example. For a real app, use UUID or similar.
-      const newRecipeWithId: SavedRecipe = { ...recipe, id: recipe.recipeName + Date.now().toString() };
       const updatedRecipes = [...prevRecipes, newRecipeWithId];
       updateLocalStorage(updatedRecipes);
-      toast({
-        title: "Recipe Saved!",
-        description: `"${recipe.recipeName}" has been added to your list.`,
-      });
       return updatedRecipes;
     });
-  }, [toast]);
+
+    toast({
+      title: "Recipe Saved!",
+      description: `"${newRecipeWithId.recipeName}" has been added to your list.`,
+    });
+    return newRecipeWithId;
+  }, [savedRecipes, toast]);
 
   const removeRecipe = useCallback((recipeId: string) => {
     setSavedRecipes(prevRecipes => {
@@ -87,3 +89,4 @@ export function useSavedRecipes() {
 
   return { savedRecipes, addRecipe, removeRecipe, isRecipeSaved };
 }
+
