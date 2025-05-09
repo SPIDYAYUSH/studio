@@ -1,4 +1,3 @@
-
 "use client";
 
 import * as React from 'react';
@@ -27,8 +26,8 @@ export default function Home() {
   return (
     <main
       className="min-h-screen bg-cover bg-center bg-fixed relative"
-      style={{ backgroundImage: "url('https://i.imgur.com/ABXtUuD.jpg')" }} // Previous Imgur background
-      data-ai-hint="indian mother kitchen"
+      style={{ backgroundImage: "url('https://picsum.photos/1280/720')" }} 
+      data-ai-hint="chef ingredients"
     >
       <div className="absolute inset-0 bg-background/75 backdrop-blur-sm"></div>
 
@@ -36,12 +35,12 @@ export default function Home() {
         <div className="w-full max-w-3xl">
           <header className="mb-12 text-center flex flex-col items-center">
             <Image
-              src="https://i.imgur.com/fGJkMRM.png" // Previous Imgur logo
+              src="https://picsum.photos/120/120" 
               alt="Maa Ka Khana - A loving mother's touch in cooking"
               width={120}
               height={120}
               className="mb-6 rounded-full shadow-2xl border-4 border-primary/60"
-              data-ai-hint="indian mother"
+              data-ai-hint="cooking logo"
             />
             <h1 className="text-5xl font-extrabold tracking-tight text-primary sm:text-6xl lg:text-7xl drop-shadow-md">
               Maa Ka Khana
