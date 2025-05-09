@@ -21,6 +21,12 @@ const nextConfig: NextConfig = {
         hostname: 'sl.bing.net',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.imgur.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
