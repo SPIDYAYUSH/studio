@@ -27,8 +27,8 @@ export default function Home() {
   return (
     <main
       className="min-h-screen bg-cover bg-center bg-fixed relative"
-      style={{ backgroundImage: "url('https://img.freepik.com/free-vector/background-template-design-with-happy-chef-cooking_1308-43060.jpg?t=st=1746826669~exp=1746830269~hmac=653b53cf3b7ca7e8e05e96c883bac63008dc1b2648b29a75c402957d09ab5564&w=1380')" }}
-      data-ai-hint="chef cooking"
+      style={{ backgroundImage: "url('https://th.bing.com/th/id/OIP.qqQCzCVLbgiSZeOyaM4oJAHaFd?rs=1&pid=ImgDetMain')" }}
+      data-ai-hint="indian spices"
     >
       <div className="absolute inset-0 bg-background/75 backdrop-blur-sm"></div>
 
