@@ -36,12 +36,12 @@ export default function Home() {
         <div className="w-full max-w-3xl">
           <header className="mb-12 text-center flex flex-col items-center">
             <Image
-              src="https://img.freepik.com/free-vector/background-template-design-with-happy-chef-cooking_1308-43060.jpg?t=st=1746826669~exp=1746830269~hmac=653b53cf3b7ca7e8e05e96c883bac63008dc1b2648b29a75c402957d09ab5564&w=1380"
+              src="https://img.freepik.com/premium-vector/free-vector-mother-cooking-kitchen_727932-18.jpg?w=2000"
               alt="Maa Ka Khana - A loving mother's touch in cooking"
               width={120}
               height={120}
-              className="mb-6 rounded-full shadow-2xl border-4 border-primary/60"
-              data-ai-hint="chef cooking"
+              className="mb-6 rounded-full shadow-2xl border-4 border-primary/60 object-cover"
+              data-ai-hint="mother cooking"
             />
             <h1 className="text-5xl font-extrabold tracking-tight text-primary sm:text-6xl lg:text-7xl drop-shadow-md">
               Maa Ka Khana
@@ -78,3 +78,4 @@ export default function Home() {
     </main>
   );
 }
+
