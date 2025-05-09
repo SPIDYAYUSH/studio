@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from 'react';
@@ -26,8 +27,8 @@ export default function Home() {
   return (
     <main
       className="min-h-screen bg-cover bg-center bg-fixed relative"
-      style={{ backgroundImage: "url('https://picsum.photos/1280/720')" }} 
-      data-ai-hint="chef ingredients"
+      style={{ backgroundImage: "url('https://img.freepik.com/free-vector/background-template-design-with-happy-chef-cooking_1308-43060.jpg?t=st=1746826669~exp=1746830269~hmac=653b53cf3b7ca7e8e05e96c883bac63008dc1b2648b29a75c402957d09ab5564&w=1380')" }}
+      data-ai-hint="chef cooking"
     >
       <div className="absolute inset-0 bg-background/75 backdrop-blur-sm"></div>
 
@@ -35,7 +36,7 @@ export default function Home() {
         <div className="w-full max-w-3xl">
           <header className="mb-12 text-center flex flex-col items-center">
             <Image
-              src="https://picsum.photos/120/120" 
+              src="https://picsum.photos/120/120"
               alt="Maa Ka Khana - A loving mother's touch in cooking"
               width={120}
               height={120}
