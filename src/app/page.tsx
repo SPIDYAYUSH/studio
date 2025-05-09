@@ -30,7 +30,7 @@ export default function Home() {
       style={{ backgroundImage: "url('https://picsum.photos/seed/nature-background/1920/1080')" }}
       data-ai-hint="nature landscape"
     >
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-md"></div> {/* Increased blur */}
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div> {/* Reduced blur */}
 
       <div className="container mx-auto flex flex-col items-center px-4 md:px-8 lg:px-12 relative z-10 py-12">
         <div className="w-full max-w-3xl">
