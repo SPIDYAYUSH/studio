@@ -27,8 +27,8 @@ export default function Home() {
   return (
     <main
       className="min-h-screen relative bg-cover bg-center bg-fixed"
-      style={{ backgroundImage: "url('https://picsum.photos/seed/nature-background/1920/1080')" }}
-      data-ai-hint="nature landscape"
+      style={{ backgroundImage: "url('https://picsum.photos/seed/kitchen-chef/1920/1080')" }}
+      data-ai-hint="kitchen chef"
     >
       <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div> {/* Reduced blur */}
 
@@ -36,12 +36,12 @@ export default function Home() {
         <div className="w-full max-w-3xl">
           <header className="mb-12 text-center flex flex-col items-center">
             <Image
-              src="https://picsum.photos/seed/leaf-logo/200/200"
-              alt="Maa Ka Khana Logo - Nature Theme"
+              src="https://picsum.photos/seed/spice-logo/200/200"
+              alt="Maa Ka Khana Logo - Spice Theme"
               width={100}
               height={100}
               className="mb-4 rounded-full shadow-lg border-2 border-primary/50"
-              data-ai-hint="leaf logo"
+              data-ai-hint="spice logo"
             />
             <h1 className="text-5xl font-extrabold tracking-tight text-primary sm:text-6xl lg:text-7xl drop-shadow-md">
               Maa Ka Khana
@@ -78,4 +78,3 @@ export default function Home() {
     </main>
   );
 }
-
