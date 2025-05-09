@@ -44,28 +44,28 @@ export default function Home() {
       style={{ backgroundImage: "url('https://picsum.photos/1920/1080?image=1062&blur=4')" }} // Example: changed picsum image to a food/kitchen related one and added more blur
       data-ai-hint="indian kitchen" // Updated hint for better relevance to the theme
     >
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div> {/* Overlay */}
+      <div className="absolute inset-0 bg-background/75 backdrop-blur-md"></div> {/* Overlay: adjusted opacity and blur */}
 
       {/* Top-left decorative image */}
-      <div className="absolute top-20 left-20 opacity-50 hidden lg:block transform -rotate-12 transition-all duration-300 ease-in-out hover:scale-105 hover:opacity-70 z-5">
+      <div className="absolute top-16 left-16 opacity-60 hidden lg:block transform -rotate-12 transition-all duration-300 ease-in-out hover:scale-110 hover:opacity-85 z-5">
         <Image
-          src="https://picsum.photos/seed/spiceseed/150/150"
+          src="https://picsum.photos/seed/spiceseed/200/200" // Slightly increased size
           alt="Decorative spices"
-          width={130}
-          height={130}
-          className="rounded-full shadow-xl border-4 border-secondary/30"
+          width={150} // Increased size
+          height={150} // Increased size
+          className="rounded-full shadow-2xl border-4 border-secondary/40" // Enhanced shadow and border
           data-ai-hint="indian spices"
         />
       </div>
 
       {/* Bottom-right decorative image */}
-      <div className="absolute bottom-20 right-20 opacity-50 hidden lg:block transform rotate-12 transition-all duration-300 ease-in-out hover:scale-105 hover:opacity-70 z-5">
+      <div className="absolute bottom-16 right-16 opacity-60 hidden lg:block transform rotate-12 transition-all duration-300 ease-in-out hover:scale-110 hover:opacity-85 z-5">
         <Image
-          src="https://picsum.photos/seed/utensilseed/150/150"
+          src="https://picsum.photos/seed/utensilseed/200/200" // Slightly increased size
           alt="Decorative kitchenware"
-          width={130}
-          height={130}
-          className="rounded-xl shadow-xl border-4 border-secondary/30"
+          width={150} // Increased size
+          height={150} // Increased size
+          className="rounded-2xl shadow-2xl border-4 border-secondary/40" // Enhanced shadow and border
           data-ai-hint="kitchenware pattern"
         />
       </div>
@@ -75,17 +75,17 @@ export default function Home() {
         <div className="w-full max-w-3xl">
           <header className="mb-12 text-center flex flex-col items-center">
              <Image
-                src="https://picsum.photos/id/1005/150/150" // Changed image to reflect a more motherly/homely feel
+                src="https://picsum.photos/id/1005/150/150" 
                 alt="Maa Ka Khana - A loving mother's touch in cooking"
                 width={120}
                 height={120}
-                className="mb-6 rounded-full shadow-xl border-4 border-white"
-                data-ai-hint="indian mother" // Updated hint for better relevance
+                className="mb-6 rounded-full shadow-2xl border-4 border-primary/50" // Changed border to primary
+                data-ai-hint="indian mother" 
               />
-            <h1 className="text-5xl font-extrabold tracking-tight text-primary sm:text-6xl lg:text-7xl drop-shadow-md">
+            <h1 className="text-5xl font-extrabold tracking-tight text-primary sm:text-6xl lg:text-7xl drop-shadow-lg"> {/* Increased drop shadow */}
               Maa Ka Khana
             </h1>
-            <p className="mt-4 text-xl text-foreground/80 sm:text-2xl max-w-xl mx-auto">
+            <p className="mt-4 text-xl text-foreground/80 sm:text-2xl max-w-xl mx-auto drop-shadow-sm"> {/* Added subtle drop shadow */}
               Tell Maa what's in your fridge, add your preferences, and get a delicious Indian recipe instantly!
             </p>
           </header>
@@ -103,7 +103,7 @@ export default function Home() {
               }}
               variant="outline"
               size="lg"
-              className="bg-secondary/80 hover:bg-secondary text-secondary-foreground font-semibold shadow-md"
+              className="bg-secondary/80 hover:bg-secondary text-secondary-foreground font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200" // Enhanced shadow and hover effect
             >
               {showSavedRecipes ? <ListCollapse className="mr-2 h-5 w-5" /> : <ListOrdered className="mr-2 h-5 w-5" />}
               {showSavedRecipes ? 'Hide Saved Recipes' : 'Show Saved Recipes'}
@@ -112,7 +112,7 @@ export default function Home() {
 
           {/* Conditional rendering for SavedRecipesList */}
           {/* Wrapped in a div for transition control if needed */}
-          <div className={`transition-all duration-500 ease-in-out ${showSavedRecipes ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
+          <div className={`transition-all duration-500 ease-in-out ${showSavedRecipes ? 'max-h-screen opacity-100 mt-8' : 'max-h-0 opacity-0 overflow-hidden mt-0'}`}> {/* Added mt-8 for spacing when shown */}
             {showSavedRecipes && <SavedRecipesList onViewRecipe={handleViewRecipe} />}
           </div>
         </div>
