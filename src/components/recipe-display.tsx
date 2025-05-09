@@ -9,6 +9,7 @@ import { Flame, MapPin, UtensilsCrossed, ListChecks, CookingPot, Bookmark, Bookm
 import type { SuggestRecipeFromIngredientsOutput } from '@/ai/flows/suggest-recipe-from-ingredients';
 import { useSavedRecipes, type SavedRecipe } from '@/hooks/use-saved-recipes'; 
 import { useRecipePlaylists } from '@/hooks/use-recipe-playlists';
+import { Checkbox } from "@/components/ui/checkbox"; // Import Checkbox
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -46,7 +47,24 @@ export function RecipeDisplay({ recipe }: RecipeDisplayProps) {
   const { toast } = useToast();
   const spiceInfo = getSpiceLevel(recipe.spiceLevel);
   
-  // Check if the *currently displayed* recipe (from props) is saved
+  const [checkedIngredients, setCheckedIngredients] = React.useState<Record<string, boolean>>({});
+
+  // Reset checked ingredients when the recipe changes
+  React.useEffect(() => {
+    const initialCheckedState: Record<string, boolean> = {};
+    recipe.ingredients.forEach(ingredient => {
+      initialCheckedState[ingredient] = false;
+    });
+    setCheckedIngredients(initialCheckedState);
+  }, [recipe]);
+
+  const handleIngredientCheck = (ingredient: string, checked: boolean) => {
+    setCheckedIngredients(prev => ({
+      ...prev,
+      [ingredient]: checked,
+    }));
+  };
+
   const currentSavedRecipe = savedRecipes.find(r => r.recipeName === recipe.recipeName);
   const isCurrentlySaved = !!currentSavedRecipe;
 
@@ -54,7 +72,7 @@ export function RecipeDisplay({ recipe }: RecipeDisplayProps) {
     if (isCurrentlySaved && currentSavedRecipe) {
       removeRecipe(currentSavedRecipe.id);
     } else {
-      await addRecipe(recipe); // addRecipe is now async
+      await addRecipe(recipe);
     }
   };
 
@@ -62,25 +80,17 @@ export function RecipeDisplay({ recipe }: RecipeDisplayProps) {
     let recipeToAdd: SavedRecipe | null = savedRecipes.find(r => r.recipeName === recipe.recipeName);
 
     if (!recipeToAdd) {
-      // If not saved, save it now. addRecipe returns the SavedRecipe or null.
       const newlySavedRecipe = await addRecipe(recipe); 
       if (newlySavedRecipe) {
         recipeToAdd = newlySavedRecipe; 
       } else {
-        // Saving failed or it was identified as already saved by addRecipe (which would have returned it and shown a toast).
-        // If addRecipe returned null and didn't save, we can't proceed.
-        // A toast might have already been shown by addRecipe if it failed or was a duplicate.
-        // We can add a fallback toast here if desired, but it might be redundant.
-        // For now, if newlySavedRecipe is null, we assume addRecipe handled user feedback.
         return;
       }
     }
 
-    // At this point, recipeToAdd should be the SavedRecipe object with an ID
     if (recipeToAdd) {
       addRecipeToPlaylist(playlistId, recipeToAdd.id, recipeToAdd.recipeName);
     } else {
-      // This case should ideally not be reached if addRecipe works as expected
       toast({ title: "Error", description: "Could not obtain saved recipe details. Try saving the recipe first.", variant: "destructive" });
     }
   };
@@ -102,7 +112,6 @@ export function RecipeDisplay({ recipe }: RecipeDisplayProps) {
               {isCurrentlySaved ? <BookmarkCheck className="h-6 w-6 text-primary" /> : <Bookmark className="h-6 w-6" />}
             </Button>
             
-            {/* Show "Add to Playlist" if playlists exist, regardless of saved status */}
             {playlists.length > 0 && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -121,7 +130,6 @@ export function RecipeDisplay({ recipe }: RecipeDisplayProps) {
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
-            {/* Show disabled "Add to Playlist" button if no playlists exist */}
              {playlists.length === 0 && (
                 <Button variant="ghost" size="icon" disabled title="Create a playlist first to add this recipe" className="text-muted-foreground cursor-not-allowed">
                     <ListPlus className="h-6 w-6" />
@@ -156,11 +164,29 @@ export function RecipeDisplay({ recipe }: RecipeDisplayProps) {
         <div>
           <h3 className="mb-3 text-xl font-semibold flex items-center gap-2 text-foreground/90">
              <ListChecks className="h-5 w-5 text-secondary-foreground" />
-             Ingredients Needed:
+             Ingredients Checklist:
           </h3>
-          <ul className="list-disc space-y-1.5 pl-8 text-muted-foreground text-base">
+          <ul className="space-y-2 pl-2 text-base">
             {recipe.ingredients.map((ingredient, index) => (
-              <li key={index}>{ingredient}</li>
+              <li key={index} className="flex items-center gap-3 py-1">
+                <Checkbox
+                  id={`ingredient-${index}-${recipe.recipeName}`} // Ensure unique ID
+                  checked={checkedIngredients[ingredient] || false}
+                  onCheckedChange={(checked) => handleIngredientCheck(ingredient, checked as boolean)}
+                  className="border-primary/50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                  aria-label={`Mark ${ingredient} as gathered`}
+                />
+                <label
+                  htmlFor={`ingredient-${index}-${recipe.recipeName}`} // Ensure unique ID
+                  className={`cursor-pointer transition-colors ${
+                    checkedIngredients[ingredient]
+                      ? 'line-through text-muted-foreground/70'
+                      : 'text-muted-foreground hover:text-foreground/80'
+                  }`}
+                >
+                  {ingredient}
+                </label>
+              </li>
             ))}
           </ul>
         </div>
@@ -183,4 +209,3 @@ export function RecipeDisplay({ recipe }: RecipeDisplayProps) {
     </Card>
   );
 }
-
