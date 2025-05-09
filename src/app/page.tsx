@@ -1,4 +1,3 @@
-
 "use client"; // Mark as client component due to useState and event handlers
 
 import * as React from 'react'; // Import React
@@ -19,9 +18,6 @@ export default function Home() {
 
   const handleViewRecipe = (recipe: SavedRecipe) => {
     // When a saved recipe is clicked to "View", set it to be displayed by RecipeSuggester/RecipeDisplay
-    // This assumes RecipeSuggester can accept an initial recipe or has a way to display a passed recipe.
-    // For now, we'll pass it down and RecipeSuggester can decide how to show it.
-    // Or, we could have RecipeDisplay directly here.
     setRecipeToView(recipe);
     setShowSavedRecipes(false); // Optionally hide the list when viewing one
      // Scroll to the top to see the recipe display
@@ -36,38 +32,13 @@ export default function Home() {
 
   return (
     <main
-      className="min-h-screen py-12 bg-cover bg-center bg-fixed relative overflow-hidden"
-      style={{ backgroundImage: "url('https://picsum.photos/seed/warmkitchenbg/1920/1080?blur=5&grayscale')" }} 
-      data-ai-hint="indian kitchen" 
+      className="min-h-screen bg-cover bg-center bg-fixed relative"
+      style={{ backgroundImage: "url('https://picsum.photos/seed/indianmomkitchen/1920/1080')" }} 
+      data-ai-hint="indian mother kitchen" 
     >
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div> {/* Overlay: increased opacity and reduced blur for readability */}
+      <div className="absolute inset-0 bg-background/75 backdrop-blur-sm"></div> {/* Overlay for better text readability */}
 
-      {/* Top-left decorative image - more subtle */}
-      <div className="absolute top-8 left-8 opacity-50 hidden lg:block transform -rotate-15 transition-all duration-300 ease-in-out hover:scale-105 hover:opacity-75 z-5">
-        <Image
-          src="https://picsum.photos/seed/spicesbowl/150/150"
-          alt="Decorative spices"
-          width={100} 
-          height={100}
-          className="rounded-full shadow-xl border-2 border-secondary/30"
-          data-ai-hint="indian spices"
-        />
-      </div>
-
-      {/* Bottom-right decorative image - more subtle */}
-      <div className="absolute bottom-8 right-8 opacity-50 hidden lg:block transform rotate-15 transition-all duration-300 ease-in-out hover:scale-105 hover:opacity-75 z-5">
-        <Image
-          src="https://picsum.photos/seed/paisleypattern/150/150" 
-          alt="Decorative traditional pattern"
-          width={100}
-          height={100}
-          className="rounded-lg shadow-xl border-2 border-secondary/30"
-          data-ai-hint="traditional pattern"
-        />
-      </div>
-
-
-      <div className="container mx-auto flex flex-col items-center px-4 md:px-8 lg:px-12 relative z-10">
+      <div className="container mx-auto flex flex-col items-center px-4 md:px-8 lg:px-12 relative z-10 py-12">
         <div className="w-full max-w-3xl">
           <header className="mb-12 text-center flex flex-col items-center">
              <Image
