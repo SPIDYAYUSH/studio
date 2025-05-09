@@ -1,4 +1,3 @@
-
 // src/components/recipe-suggester.tsx
 "use client";
 
@@ -61,84 +60,120 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
 
   // Initialize SpeechRecognition
   useEffect(() => {
+    console.log('Speech recognition effect runs. isListening:', isListening);
     if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
       const SpeechRecognitionAPI = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognitionAPI) {
-        speechRecognitionRef.current = new SpeechRecognitionAPI();
-        speechRecognitionRef.current.continuous = true;
-        speechRecognitionRef.current.interimResults = false; // Process final results
-        speechRecognitionRef.current.lang = 'en-IN'; // Set language to Indian English
+        if (!speechRecognitionRef.current) { // Initialize only if not already initialized
+            speechRecognitionRef.current = new SpeechRecognitionAPI();
+            console.log('SpeechRecognition API initialized.');
+        }
+        
+        const recognition = speechRecognitionRef.current;
+        recognition.continuous = true; // Keep listening even after a pause
+        recognition.interimResults = false; // We only want final results
+        recognition.lang = 'en-IN';
 
-        speechRecognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
+        recognition.onstart = () => {
+          console.log('Speech recognition started.');
+        };
+
+        recognition.onresult = (event: SpeechRecognitionEvent) => {
+          console.log('Speech recognition result:', event);
           let transcript = '';
           for (let i = event.resultIndex; i < event.results.length; ++i) {
             if (event.results[i].isFinal) {
-              transcript += event.results[i][0].transcript + ' ';
+              transcript += event.results[i][0].transcript + ' '; // Add space after each part
             }
           }
+
           if (transcript.trim()) {
+            console.log('Final transcript:', transcript.trim());
             const currentIngredients = form.getValues('ingredients');
-            form.setValue('ingredients', (currentIngredients ? currentIngredients + ', ' : '') + transcript.trim());
+            const newIngredients = (currentIngredients ? currentIngredients.trim() + ', ' : '') + transcript.trim();
+            form.setValue('ingredients', newIngredients.trim() + ' '); // Add trailing space for next input
+            // toast({ title: "Heard:", description: transcript.trim() }); // Optional: for quick feedback
+          } else {
+            console.log('No final transcript in this result event or transcript is empty.');
           }
         };
 
-        speechRecognitionRef.current.onerror = (event: SpeechRecognitionErrorEvent) => {
-          console.error('Speech recognition error:', event.error);
+        recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+          console.error('Speech recognition error:', event.error, event.message);
+          let errorMessage = `Could not recognize speech. Error: ${event.error}.`;
+          if (event.message) {
+            errorMessage += ` Message: ${event.message}`;
+          }
+
+          if (event.error === 'no-speech') {
+            errorMessage = 'No speech was detected. Please try speaking louder or ensure your microphone is not muted.';
+          } else if (event.error === 'audio-capture') {
+            errorMessage = 'Audio capture failed. Please check your microphone connection and permissions.';
+          } else if (event.error === 'not-allowed') {
+            errorMessage = 'Microphone access was denied or not available. Please enable it in your browser settings.';
+          } else if (event.error === 'network') {
+            errorMessage = 'Network error during speech recognition. Please check your internet connection.';
+          }
+
+
           toast({
             title: 'Voice Input Error',
-            description: `Could not recognize speech: ${event.error}. Please try again or type manually.`,
+            description: errorMessage,
             variant: 'destructive',
           });
-          setIsListening(false);
+          setIsListening(false); // Ensure UI reflects that it's not listening
         };
 
-        speechRecognitionRef.current.onend = () => {
-          // Automatically restart listening if it wasn't manually stopped
-          // This check helps prevent restarting when stopListening is called
-          if (speechRecognitionRef.current && isListening) {
-            // Check if isListening is still true, which implies it wasn't a manual stop
-            // speechRecognitionRef.current.start();
-          } else {
-            // If it was manually stopped or an error occurred that set isListening to false.
-             setIsListening(false);
-          }
+        recognition.onend = () => {
+          console.log('Speech recognition ended.');
+          // Only set isListening to false if it was not intentionally stopped
+          // This check relies on isListening being up-to-date from the closure
+          // If an error or natural end occurred, and we are not manually stopping, this ensures state is reset.
+          // If handleToggleListening set isListening to false already, this is fine.
+          setIsListening(false);
         };
       } else {
-         console.warn('SpeechRecognition API not fully supported.');
+         console.warn('SpeechRecognition API constructor not found, though present in window.');
       }
     } else {
       console.warn('SpeechRecognition API not available in this browser.');
     }
 
-    // Cleanup on component unmount
+    // Cleanup on component unmount or when isListening changes causing re-setup
     return () => {
+      console.log('Speech recognition effect cleanup. isListening:', isListening);
       if (speechRecognitionRef.current) {
-        speechRecognitionRef.current.stop();
+        console.log('Stopping speech recognition in cleanup.');
+        speechRecognitionRef.current.stop(); // Stop any active recognition
+        // It's good practice to nullify handlers to prevent potential memory leaks
+        // or calls on unmounted components, though modern browsers might handle this well.
+        speechRecognitionRef.current.onstart = null;
         speechRecognitionRef.current.onresult = null;
         speechRecognitionRef.current.onerror = null;
         speechRecognitionRef.current.onend = null;
-        speechRecognitionRef.current = null;
+        // speechRecognitionRef.current = null; // Avoid nullifying ref if re-used, unless re-creating instance
       }
     };
-  }, [form, toast, isListening]); // Added isListening to dependencies
+  }, [form, toast, isListening]); // Re-run effect if isListening changes to correctly manage start/stop and handler closures
 
   const handleToggleListening = async () => {
     if (!speechRecognitionRef.current) {
       toast({
         title: 'Voice Input Not Supported',
-        description: 'Your browser does not support voice input, or permission was denied.',
+        description: 'Your browser does not support voice input, or it failed to initialize.',
         variant: 'destructive',
       });
+      console.error('speechRecognitionRef.current is null in handleToggleListening');
       return;
     }
 
     if (isListening) {
+      console.log('Manually stopping speech recognition.');
       speechRecognitionRef.current.stop();
-      setIsListening(false);
+      setIsListening(false); // This will trigger useEffect cleanup/re-setup
     } else {
       try {
-        // Check for microphone permission explicitly
-        // Note: This is a simplified check. Robust permission handling is more complex.
+        // Check for microphone permission
         if (navigator.permissions) {
             const permissionStatus = await navigator.permissions.query({ name: 'microphone' as PermissionName });
             if (permissionStatus.state === 'denied') {
@@ -147,20 +182,25 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
                     description: 'Please enable microphone access in your browser settings to use voice input.',
                     variant: 'destructive',
                 });
+                console.warn('Microphone permission denied.');
                 return;
             }
+             if (permissionStatus.state === 'prompt') {
+                console.log('Microphone permission prompt will be shown.');
+            }
         }
+        console.log('Attempting to start speech recognition.');
         speechRecognitionRef.current.start();
-        setIsListening(true);
+        setIsListening(true); // This will trigger useEffect to potentially re-attach handlers with new 'isListening' closure
         toast({
           title: 'Listening...',
-          description: 'Speak your ingredients now.',
+          description: 'Speak your ingredients now. Click the mic again to stop.',
         });
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error starting speech recognition:', error);
         toast({
           title: 'Could not start voice input',
-          description: 'Please ensure microphone access is allowed and try again.',
+          description: `Error: ${error.message || 'Unknown error'}. Please ensure microphone access is allowed.`,
           variant: 'destructive',
         });
         setIsListening(false);
@@ -184,11 +224,22 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
       onClearInitialRecipe();
     }
 
+    // Ensure speech recognition is stopped before submitting
+    if (isListening && speechRecognitionRef.current) {
+        console.log('Stopping speech recognition before submitting form.');
+        speechRecognitionRef.current.stop();
+        setIsListening(false);
+    }
+
+
     try {
       const ingredientList = values.ingredients
         .split(/[\n,]+/)
         .map(item => item.trim())
         .filter(item => item.length > 0);
+      
+      console.log('Submitting ingredients:', ingredientList);
+
 
       if (ingredientList.length === 0) {
         form.setError("ingredients", { type: "manual", message: "Please enter valid ingredients separated by commas or newlines." });
@@ -203,7 +254,8 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
       };
 
       const result = await suggestRecipeFromIngredients(input);
-      await new Promise(resolve => setTimeout(resolve, 300));
+      console.log('Recipe suggestion result:', result);
+      await new Promise(resolve => setTimeout(resolve, 300)); // Simulate delay for UX
       setRecipe(result);
 
     } catch (error) {
@@ -243,7 +295,7 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
                       variant="ghost"
                       size="icon"
                       onClick={handleToggleListening}
-                      className={`p-2 rounded-full transition-colors ${isListening ? 'bg-destructive/20 text-destructive hover:bg-destructive/30' : 'hover:bg-accent/20'}`}
+                      className={`p-2 rounded-full transition-colors ${isListening ? 'bg-destructive/20 text-destructive hover:bg-destructive/30 animate-pulse' : 'hover:bg-accent/20'}`}
                       aria-label={isListening ? "Stop listening" : "Start voice input"}
                     >
                       {isListening ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
@@ -318,7 +370,7 @@ export function RecipeSuggester({ initialRecipe, onClearInitialRecipe }: RecipeS
 
             <Button
               type="submit"
-              disabled={isLoading || isListening} // Disable submit while listening
+              disabled={isLoading || isListening} 
               size="lg"
               className="w-full text-lg font-semibold bg-accent text-accent-foreground hover:bg-accent/90 transition-all duration-200 transform hover:scale-105 focus:scale-105 active:scale-100 shadow-md hover:shadow-lg"
             >
